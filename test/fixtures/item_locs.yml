@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  locale: MyString
+  localized_name: MyString
+  localized_desc: MyString
+  item_info: 
+
+two:
+  locale: MyString
+  localized_name: MyString
+  localized_desc: MyString
+  item_info: 

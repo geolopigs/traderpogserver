@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  price: 1
+  supplymax_1: 1
+  supplyrate_1: 1
+  supplymax_2: 1
+  supplyrate_2: 1
+  supplymax_3: 1
+  supplyrate_3: 1
+
+two:
+  price: 1
+  supplymax_1: 1
+  supplyrate_1: 1
+  supplymax_2: 1
+  supplyrate_2: 1
+  supplymax_3: 1
+  supplyrate_3: 1

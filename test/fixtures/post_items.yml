@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  post: 
+  item_info: 
+  level: 1
+
+two:
+  post: 
+  item_info: 
+  level: 1

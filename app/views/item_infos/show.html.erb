@@ -1,0 +1,76 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Price:</b>
+  <%= @item_info.price %>
+</p>
+
+<p>
+  <b>Supplymax 1:</b>
+  <%= @item_info.supplymax_1 %>
+</p>
+
+<p>
+  <b>Supplyrate 1:</b>
+  <%= @item_info.supplyrate_1 %>
+</p>
+
+<p>
+  <b>Supplymax 2:</b>
+  <%= @item_info.supplymax_2 %>
+</p>
+
+<p>
+  <b>Supplyrate 2:</b>
+  <%= @item_info.supplyrate_2 %>
+</p>
+
+<p>
+  <b>Supplymax 3:</b>
+  <%= @item_info.supplymax_3 %>
+</p>
+
+<p>
+  <b>Supplyrate 3:</b>
+  <%= @item_info.supplyrate_3 %>
+</p>
+
+<h2>Localized information</h2>
+<% @item_info.item_locs.each do |item_loc| %>
+    <p>
+      <b>Locale:</b>
+      <%= item_loc.locale %>
+    </p>
+
+    <p>
+      <b>Localized name:</b>
+      <%= item_loc.localized_name %>
+    </p>
+
+    <p>
+      <b>Localized description:</b>
+      <%= item_loc.localized_desc %>
+    </p>
+<% end %>
+
+<h2>Add localized information:</h2>
+<%= form_for([@item_info, @item_info.item_locs.build]) do |f| %>
+    <div class="field">
+      <%= f.label :locale %><br />
+      <%= f.text_field :locale %>
+    </div>
+    <div class="field">
+      <%= f.label :localized_name %><br />
+      <%= f.text_field :localized_name %>
+    </div>
+    <div class="field">
+      <%= f.label :localized_desc %><br />
+      <%= f.text_field :localized_desc %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+<%= link_to 'Edit', edit_item_info_path(@item_info) %> |
+<%= link_to 'Back', item_infos_path %>
