@@ -3,18 +3,18 @@ module ApplicationHelper
   ##
   # Returns the language preferred by the user.
   ##
-  def ApplicationHelper.preferred_language(accept_language_string, default_language="en-us")
+  def ApplicationHelper.preferred_language(accept_language, default_language="en")
 
     # parse Accept-Language
-    if accept_language_string
-      accepted = accept_language_string
+    if accept_language
+      accepted = accept_language
     else
       accepted = default_language
     end
     accepted = accepted.to_s.split(",")
     accepted = accepted.map { |l| l.strip.split(";") }
     accepted = accepted.map { |l|
-      if (l.size == 2)
+      if l.size == 2
         # quality present
         [ l[0].split("-")[0].downcase, l[1].sub(/^q=/, "").to_f ]
       else

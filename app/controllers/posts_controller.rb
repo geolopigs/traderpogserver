@@ -13,7 +13,7 @@ class PostsController < ApplicationController
   # GET /posts/1
   # GET /posts/1.json
   def show
-    # Get the Accept-Language first. If it doesn't exist, default to en-us
+    # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
     @post = Post.find(params[:id])
     @item_locs = ItemLoc.where("locale = ?", "#{@language}")
