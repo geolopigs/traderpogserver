@@ -3,12 +3,9 @@
 <table>
   <tr>
     <th>Price</th>
-    <th>Supplymax 1</th>
-    <th>Supplyrate 1</th>
-    <th>Supplymax 2</th>
-    <th>Supplyrate 2</th>
-    <th>Supplymax 3</th>
-    <th>Supplyrate 3</th>
+    <th>SupplyMax</th>
+    <th>SupplyRate</th>
+    <th>Multiplier</th>
     <th></th>
     <th></th>
     <th></th>
@@ -17,12 +14,9 @@
 <% @item_infos.each do |item_info| %>
   <tr>
     <td><%= item_info.price %></td>
-    <td><%= item_info.supplymax_1 %></td>
-    <td><%= item_info.supplyrate_1 %></td>
-    <td><%= item_info.supplymax_2 %></td>
-    <td><%= item_info.supplyrate_2 %></td>
-    <td><%= item_info.supplymax_3 %></td>
-    <td><%= item_info.supplyrate_3 %></td>
+    <td><%= item_info.supplymax %></td>
+    <td><%= item_info.supplyrate %></td>
+    <td><%= item_info.multiplier %></td>
     <td><%= link_to 'Show', item_info %></td>
     <td><%= link_to 'Edit', edit_item_info_path(item_info) %></td>
     <td><%= link_to 'Destroy', item_info, confirm: 'Are you sure?', method: :delete %></td>

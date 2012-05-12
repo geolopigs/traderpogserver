@@ -1,45 +1,45 @@
 <p id="notice"><%= notice %></p>
 
 <p>
-  <b>Price:</b>
-  <%= @item_info.price %>
+  <b>Capacity:</b>
+  <%= @flyer_info.capacity %>
 </p>
 
 <p>
-  <b>SupplyMax:</b>
-  <%= @item_info.supplymax %>
+  <b>Speed:</b>
+  <%= @flyer_info.speed %>
 </p>
 
 <p>
-  <b>SupplyRate:</b>
-  <%= @item_info.supplyrate %>
+  <b>Stormresist:</b>
+  <%= @flyer_info.stormresist %>
 </p>
 
 <p>
   <b>Multiplier:</b>
-  <%= @item_info.multiplier %>
+  <%= @flyer_info.multiplier %>
 </p>
 
 <h2>Localized information</h2>
-<% @item_info.item_locs.each do |item_loc| %>
+<% @flyer_info.flyer_locs.each do |flyer_loc| %>
     <p>
       <b>Locale:</b>
-      <%= item_loc.locale %>
+      <%= flyer_loc.locale %>
     </p>
 
     <p>
       <b>Localized name:</b>
-      <%= item_loc.localized_name %>
+      <%= flyer_loc.localized_name %>
     </p>
 
     <p>
       <b>Localized description:</b>
-      <%= item_loc.localized_desc %>
+      <%= flyer_loc.localized_desc %>
     </p>
 <% end %>
 
 <h2>Add localized information:</h2>
-<%= form_for([@item_info, @item_info.item_locs.build]) do |f| %>
+<%= form_for([@flyer_info, @flyer_info.flyer_locs.build]) do |f| %>
     <div class="field">
       <%= f.label :locale %><br />
       <%= f.text_field :locale %>
@@ -57,5 +57,5 @@
     </div>
 <% end %>
 
-<%= link_to 'Edit', edit_item_info_path(@item_info) %> |
-<%= link_to 'Back', item_infos_path %>
+<%= link_to 'Edit', edit_flyer_info_path(@flyer_info) %> |
+<%= link_to 'Back', flyer_infos_path %>

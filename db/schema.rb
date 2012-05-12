@@ -11,18 +11,35 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120505163910) do
+ActiveRecord::Schema.define(:version => 20120512055315) do
+
+  create_table "flyer_infos", :force => true do |t|
+    t.integer  "capacity"
+    t.integer  "speed"
+    t.integer  "stormresist"
+    t.integer  "multiplier"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "flyer_locs", :force => true do |t|
+    t.string   "locale"
+    t.string   "localized_name"
+    t.string   "localized_desc"
+    t.integer  "flyer_info_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  add_index "flyer_locs", ["flyer_info_id"], :name => "index_flyer_locs_on_flyer_info_id"
 
   create_table "item_infos", :force => true do |t|
     t.integer  "price"
-    t.integer  "supplymax_1"
-    t.integer  "supplyrate_1"
-    t.integer  "supplymax_2"
-    t.integer  "supplyrate_2"
-    t.integer  "supplymax_3"
-    t.integer  "supplyrate_3"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "supplymax"
+    t.integer  "supplyrate"
+    t.integer  "multiplier"
   end
 
   create_table "item_locs", :force => true do |t|

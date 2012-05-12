@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  capacity: 1
+  speed: 1
+  stormresist: 1
+  multiplier: 1
+
+two:
+  capacity: 1
+  speed: 1
+  stormresist: 1
+  multiplier: 1

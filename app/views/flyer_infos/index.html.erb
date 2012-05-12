@@ -1,0 +1,29 @@
+<h1>Listing flyer_infos</h1>
+
+<table>
+  <tr>
+    <th>Capacity</th>
+    <th>Speed</th>
+    <th>Stormresist</th>
+    <th>Multiplier</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @flyer_infos.each do |flyer_info| %>
+  <tr>
+    <td><%= flyer_info.capacity %></td>
+    <td><%= flyer_info.speed %></td>
+    <td><%= flyer_info.stormresist %></td>
+    <td><%= flyer_info.multiplier %></td>
+    <td><%= link_to 'Show', flyer_info %></td>
+    <td><%= link_to 'Edit', edit_flyer_info_path(flyer_info) %></td>
+    <td><%= link_to 'Destroy', flyer_info, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Flyer info', new_flyer_info_path %>

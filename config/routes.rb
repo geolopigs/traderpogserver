@@ -1,5 +1,9 @@
 TraderPog::Application.routes.draw do
 
+  resources :flyer_infos do
+    resources :flyer_locs
+  end
+
   resources :posts do
     collection do
       get 'scan'

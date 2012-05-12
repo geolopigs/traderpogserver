@@ -1,0 +1,33 @@
+<%= form_for(@flyer_info) do |f| %>
+  <% if @flyer_info.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@flyer_info.errors.count, "error") %> prohibited this flyer_info from being saved:</h2>
+
+      <ul>
+      <% @flyer_info.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :capacity %><br />
+    <%= f.number_field :capacity %>
+  </div>
+  <div class="field">
+    <%= f.label :speed %><br />
+    <%= f.number_field :speed %>
+  </div>
+  <div class="field">
+    <%= f.label :stormresist %><br />
+    <%= f.number_field :stormresist %>
+  </div>
+  <div class="field">
+    <%= f.label :multiplier %><br />
+    <%= f.number_field :multiplier %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
