@@ -15,21 +15,19 @@ class PostsController < ApplicationController
   def show
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @post = Post.find(params[:id])
-    @item_locs = ItemLoc.where("locale = ?", "#{@language}")
-    @list_of_item_ids = PostItem.where("post_id = ?", @post.id)
-    @list_of_item_names = @list_of_item_ids.collect {
-        |item_id| ItemLoc.where("item_info_id = ? AND locale = ?",
-                                item_id,
-                                "#{@language}").select("id, item_info_id, localized_name, localized_desc").first
+    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, userid")
+    @itemids = @post.post_items.all(:select => "item_info_id")
+    @items = @itemids.collect {
+        |itemid| ItemInfosHelper.getitembylocale(itemid.item_info_id, @language)
     }
+    @item_locs = ItemLoc.where("locale = ?", "#{@language}")
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html   # show.html.erb
       format.json {
-        json_output = @post
-        json_output['items'] = @list_of_item_names
-        render json: @post.as_json(:only => [:id, :img, :items, :latitude, :longitude, :name, :region, :userid])
+        json_output = @post.as_json
+        json_output['items'] = @items.as_json
+        render json: json_output
       }
     end
   end

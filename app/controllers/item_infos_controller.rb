@@ -17,7 +17,12 @@ class ItemInfosController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render json: @item_info }
+      format.json {
+        # Get the Accept-Language first. If it doesn't exist, default to en
+        @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
+        item = ItemInfosHelper.getitembylocale(params[:id], @language)
+        render json: item
+      }
     end
   end
 

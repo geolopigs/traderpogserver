@@ -31,17 +31,18 @@
 </p>
 
 <h2>Post item information</h2>
-<% @list_of_item_names.each do |item| %>
+<% @items.each do |item| %>
     <p>
       <b>Localized name:</b>
-      <%= item.localized_name %>
+      <%= item['localized_name'] %>
       <br>
       <b>Localized description:</b>
-      <%= item.localized_desc %>
+      <%= item['localized_desc'] %>
     </p>
 <% end %>
 
 <h2>Add item information:</h2>
+
 <%= form_for([@post, @post.post_items.build]) do |f| %>
     <div class="field">
       <%= f.label :item_info %><br />
