@@ -1,4 +1,12 @@
 class ItemInfosController < ApplicationController
+
+  def getitem(index)
+    # Get the Accept-Language first. If it doesn't exist, default to en
+    @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
+    item = ItemInfosHelper.getitembylocale(index, @language)
+    return item
+  end
+
   # GET /item_infos
   # GET /item_infos.json
   def index
@@ -13,15 +21,12 @@ class ItemInfosController < ApplicationController
   # GET /item_infos/1
   # GET /item_infos/1.json
   def show
-    @item_info = ItemInfo.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
+      respond_to do |format|
+      format.html { # show.html.erb
+        @item_info = ItemInfo.find(params[:id])
+      }
       format.json {
-        # Get the Accept-Language first. If it doesn't exist, default to en
-        @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-        item = ItemInfosHelper.getitembylocale(params[:id], @language)
-        render json: item
+        render json: getitem(params[:id])
       }
     end
   end
@@ -83,6 +88,17 @@ class ItemInfosController < ApplicationController
     respond_to do |format|
       format.html { redirect_to item_infos_url }
       format.json { head :no_content }
+    end
+  end
+
+  # GET /item_infos/random
+  def random
+    count = ItemInfo.count
+    index = rand(count) + 1
+    respond_to do |format|
+      format.json {
+        render json: getitem(index)
+      }
     end
   end
 end

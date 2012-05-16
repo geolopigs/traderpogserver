@@ -13,6 +13,10 @@ TraderPog::Application.routes.draw do
   end
 
   resources :item_infos do
+    collection do
+      get 'random'
+    end
+
     resources :item_locs
   end
 
