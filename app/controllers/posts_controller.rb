@@ -15,7 +15,7 @@ class PostsController < ApplicationController
   def show
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, userid")
+    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, user_id")
     @itemids = @post.post_items.all(:select => "item_info_id")
     @items = @itemids.collect {
         |itemid| ItemInfosHelper.getitembylocale(itemid.item_info_id, @language)

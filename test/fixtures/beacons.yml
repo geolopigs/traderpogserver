@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  used: false
+  expiration: 2012-05-29 14:48:23
+  user: 
+  post: 
+
+two:
+  used: false
+  expiration: 2012-05-29 14:48:23
+  user: 
+  post: 

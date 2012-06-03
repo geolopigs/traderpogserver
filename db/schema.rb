@@ -11,7 +11,19 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120512055315) do
+ActiveRecord::Schema.define(:version => 20120603052658) do
+
+  create_table "beacons", :force => true do |t|
+    t.boolean  "used"
+    t.datetime "expiration"
+    t.integer  "user_id"
+    t.integer  "post_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "beacons", ["post_id"], :name => "index_beacons_on_post_id"
+  add_index "beacons", ["user_id"], :name => "index_beacons_on_user_id"
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -66,11 +78,20 @@ ActiveRecord::Schema.define(:version => 20120512055315) do
 
   create_table "posts", :force => true do |t|
     t.string   "name"
-    t.integer  "userid"
     t.float    "longitude"
     t.float    "latitude"
     t.string   "img"
     t.integer  "region"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "user_id"
+  end
+
+  add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
+
+  create_table "users", :force => true do |t|
+    t.boolean  "member"
+    t.integer  "bucks"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

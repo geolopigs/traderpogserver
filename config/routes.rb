@@ -1,5 +1,13 @@
 TraderPog::Application.routes.draw do
 
+  resources :users do
+    member do
+      get 'beacons'
+    end
+  end
+
+  resources :beacons
+
   resources :flyer_infos do
     resources :flyer_locs
   end

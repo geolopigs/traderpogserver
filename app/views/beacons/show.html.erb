@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Used:</b>
+  <%= @beacon.used %>
+</p>
+
+<p>
+  <b>Expiration:</b>
+  <%= @beacon.expiration %>
+</p>
+
+<p>
+  <b>User:</b>
+  <%= @beacon.user %>
+</p>
+
+<p>
+  <b>Post:</b>
+  <%= @beacon.post %>
+</p>
+
+
+<%= link_to 'Edit', edit_beacon_path(@beacon) %> |
+<%= link_to 'Back', beacons_path %>
