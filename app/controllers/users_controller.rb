@@ -13,11 +13,21 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @user }
+    begin
+      @user = User.find(params[:id])
+    rescue
+      @user = nil
+    end
+    if @user.nil?
+      respond_to do |format|
+        format.html { redirect_to users_url }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html # show.html.erb
+        format.json { render json: @user }
+      end
     end
   end
 
@@ -40,28 +50,42 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    @user = User.new(params[:user])
-
-    respond_to do |format|
-      if @user.save
-        format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render json: @user, status: :created, location: @user }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
-    end
+    # TraderPog is not allowed to create new users explicitly. Use the update function below
+    # to update users based on their userid from ProfilePog.
   end
 
   # PUT /users/1
   # PUT /users/1.json
   def update
-    @user = User.find(params[:id])
+    success = true
+    @user = nil
 
+    begin
+      # first, check if the user has already been created.
+      @user = User.find(params[:id])
+    rescue
+      @user = nil
+    end
+
+    # user doesn't exist yet. create a new user entry and set their id
+    # to match the one in ProfilePog
+    if @user.nil?
+      # new user
+      @user = User.new
+      @user.id = params[:id]
+      success = @user.save
+    end
+
+    # if everything looks good so far, set the attributes for the user
+    if success
+      success = @user.update_attributes(params[:user])
+    end
+
+    # respond to the call appropriately
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if success
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { head :no_content }
+        format.json { render json: @user.as_json(:only => [:id]) }
       else
         format.html { render action: "edit" }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -77,7 +101,6 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to users_url }
-      format.json { head :no_content }
     end
   end
 
