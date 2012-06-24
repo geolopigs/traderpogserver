@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   def index
     @posts = Post.all
 
-    # no JSON API for this. We can only access posts through the webpage.
+    # no JSON API for this. We can only access all posts through the webpage.
     respond_to do |format|
       format.html # index.html.erb
     end
@@ -36,7 +36,7 @@ class PostsController < ApplicationController
   def new
     @post = Post.new
 
-    # no JSON API for this. We can only access posts through the webpage.
+    # no JSON API for this. We create new posts using posts.json
     respond_to do |format|
       format.html # new.html.erb
     end
@@ -50,15 +50,29 @@ class PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    @post = Post.new(params[:post])
+    # Check that the user exists first
+    begin
+      @user = User.find(params[:user_id])
+    rescue
+      @user = nil
+    end
 
     respond_to do |format|
-      if @post.save
-        format.html { redirect_to @post, notice: 'Post was successfully created.' }
-        format.json { render json: @post, status: :created, location: @post }
+      if @user.nil?
+        # no corresponding user for this post. Not allowed.
+        @errormsg = { "errormsg" => "Userid does not exist" }
+        format.html { render 'posts/error', status: :forbidden }
+        format.json { render json: @errormsg, status: :forbidden }
       else
-        format.html { render action: "new" }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+        @post = Post.new(params[:post])
+
+        if @post.save
+          format.html { redirect_to @post, notice: 'Post was successfully created.' }
+          format.json { render json: @post.as_json(:only => [:id]) }
+        else
+          format.html { render action: "new" }
+          format.json { render json: @post.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -85,7 +99,7 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     @post.destroy
 
-    # no JSON API for this. We can only access posts through the webpage.
+    # no JSON API for this. We can only delete posts through the webpage.
     respond_to do |format|
       format.html { redirect_to posts_url }
     end

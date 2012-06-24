@@ -19,6 +19,7 @@ class UsersController < ApplicationController
       @user = nil
     end
     if @user.nil?
+      # Handle the case where the user is not found
       respond_to do |format|
         format.html { redirect_to users_url }
         format.json { head :no_content }
@@ -32,13 +33,12 @@ class UsersController < ApplicationController
   end
 
   # GET /users/new
-  # GET /users/new.json
   def new
     @user = User.new
 
     respond_to do |format|
       format.html # new.html.erb
-      format.json { render json: @user }
+      # JSON should use the PUTS API to create a new user
     end
   end
 
