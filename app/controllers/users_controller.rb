@@ -2,11 +2,11 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
-
     respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @users }
+      format.html { # index.html.erb
+        @users = User.all
+      }
+      #format.json { render json: @users }
     end
   end
 
@@ -34,10 +34,10 @@ class UsersController < ApplicationController
 
   # GET /users/new
   def new
-    @user = User.new
-
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { # new.html.erb
+        @user = User.new
+      }
       # JSON should use the PUTS API to create a new user
     end
   end
@@ -50,8 +50,18 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # TraderPog is not allowed to create new users explicitly. Use the update function below
-    # to update users based on their userid from ProfilePog.
+    # NOTE: This is here purely for debugging purposes. Users should not be created through
+    # the website, but rather through the JSON PUTS API.
+    respond_to do |format|
+      format.html {
+        @user = User.new(params[:user])
+        if @user.save
+          redirect_to @user, notice: 'User was successfully created.'
+        else
+          render action: "new"
+        end
+      }
+    end
   end
 
   # PUT /users/1
@@ -96,11 +106,12 @@ class UsersController < ApplicationController
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-
     respond_to do |format|
-      format.html { redirect_to users_url }
+      format.html {
+        @user = User.find(params[:id])
+        @user.destroy
+        redirect_to users_url
+      }
     end
   end
 

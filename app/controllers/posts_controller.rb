@@ -2,11 +2,12 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-    @posts = Post.all
 
     # no JSON API for this. We can only access all posts through the webpage.
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { # index.html.erb
+        @posts = Post.all
+      }
     end
   end
 
@@ -34,11 +35,11 @@ class PostsController < ApplicationController
 
   # GET /posts/new
   def new
-    @post = Post.new
-
     # no JSON API for this. We create new posts using posts.json
     respond_to do |format|
-      format.html # new.html.erb
+      format.html { # new.html.erb
+        @post = Post.new
+      }
     end
   end
 
@@ -50,14 +51,13 @@ class PostsController < ApplicationController
   # POST /posts
   # POST /posts.json
   def create
-    # Check that the user exists first
-    begin
-      @user = User.find(params[:user_id])
-    rescue
-      @user = nil
-    end
-
     respond_to do |format|
+      # Check that the user exists first
+      begin
+        @user = User.find((params[:post])[:user_id])
+      rescue
+        @user = nil
+      end
       if @user.nil?
         # no corresponding user for this post. Not allowed.
         @errormsg = { "errormsg" => "Userid does not exist" }
@@ -96,12 +96,13 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   # DELETE /posts/1.json
   def destroy
-    @post = Post.find(params[:id])
-    @post.destroy
-
     # no JSON API for this. We can only delete posts through the webpage.
     respond_to do |format|
-      format.html { redirect_to posts_url }
+      format.html {
+        @post = Post.find(params[:id])
+        @post.destroy
+        redirect_to posts_url
+      }
     end
   end
 
