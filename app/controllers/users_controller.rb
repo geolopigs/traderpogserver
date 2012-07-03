@@ -13,21 +13,14 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
-    begin
-      @user = User.find(params[:id])
-    rescue
-      @user = nil
-    end
-    if @user.nil?
-      # Handle the case where the user is not found
-      respond_to do |format|
-        format.html { redirect_to users_url }
-        format.json { head :no_content }
-      end
-    else
-      respond_to do |format|
+    respond_to do |format|
+      begin
+        @user = User.find(params[:id])
         format.html # show.html.erb
         format.json { render json: @user }
+      rescue
+        format.html { redirect_to users_url }
+        format.json { head :no_content }
       end
     end
   end
@@ -50,55 +43,41 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # NOTE: This is here purely for debugging purposes. Users should not be created through
-    # the website, but rather through the JSON PUTS API.
+    @user = User.new(params[:user])
+
     respond_to do |format|
-      format.html {
-        @user = User.new(params[:user])
-        if @user.save
-          redirect_to @user, notice: 'User was successfully created.'
-        else
-          render action: "new"
-        end
-      }
+      if @user.save
+        # Be cautious about creating users through the website. The general case is
+        # that users are only ever created via the JSON API. The website interface
+        # should only be used for debugging purposes.
+        format.html { redirect_to @user, notice: 'User was successfully created.' }
+        format.json { render json: @user.as_json(:only => [:id]) }
+      else
+        format.html { render action: "new" }
+        format.json { render json: @user.errors, status: :unprocessable_entity }
+      end
     end
   end
 
   # PUT /users/1
   # PUT /users/1.json
   def update
-    success = true
-    @user = nil
-
-    begin
-      # first, check if the user has already been created.
-      @user = User.find(params[:id])
-    rescue
-      @user = nil
-    end
-
-    # user doesn't exist yet. create a new user entry and set their id
-    # to match the one in ProfilePog
-    if @user.nil?
-      # new user
-      @user = User.new
-      @user.id = params[:id]
-      success = @user.save
-    end
-
-    # if everything looks good so far, set the attributes for the user
-    if success
-      success = @user.update_attributes(params[:user])
-    end
-
-    # respond to the call appropriately
     respond_to do |format|
-      if success
-        format.html { redirect_to @user, notice: 'User was successfully updated.' }
-        format.json { render json: @user.as_json(:only => [:id]) }
-      else
+      begin
+        @user = User.find(params[:id])
+        if @user.update_attributes(params[:user])
+          format.html { redirect_to @user, notice: 'User was successfully updated.' }
+          format.json { head :no_content }
+          #format.json { render json: @user.as_json(:only => [:id]) }
+        else
+          # Some error happened while trying to update the user
+          format.html { render action: "edit" }
+          format.json { render json: @user.errors, status: :unprocessable_entity }
+        end
+      rescue
+        # User does not exist.
         format.html { render action: "edit" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        format.json { render json: "User error", status: :unprocessable_entity }
       end
     end
   end

@@ -10,5 +10,15 @@
   <%= @user.bucks %>
 </p>
 
+<p>
+  <b>Fbid:</b>
+  <%= @user.fbid %>
+</p>
+
+<p>
+  <b>Facebook friends IDs:</b>
+  <%= @user.fb_friends %>
+</p>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

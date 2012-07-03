@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120603052658) do
+ActiveRecord::Schema.define(:version => 20120703033558) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -94,6 +94,10 @@ ActiveRecord::Schema.define(:version => 20120603052658) do
     t.integer  "bucks"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "fbid"
+    t.string   "fb_friends"
   end
+
+  add_index "users", ["fbid"], :name => "index_users_on_fbid"
 
 end
