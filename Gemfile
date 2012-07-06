@@ -36,3 +36,8 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+# Using a more robust webserver
+
+gem 'eventmachine', '1.0.0.rc.4', :platforms => [:mswin, :mingw]
+gem 'thin'
