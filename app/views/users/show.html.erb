@@ -20,5 +20,33 @@
   <%= @user.fb_friends %>
 </p>
 
+<h2>Configs</h2>
+<% @user.userconfigs.each do |userconfig| %>
+    <p>
+      <b>Key:</b>
+      <%= userconfig.key %>
+    </p>
+
+    <p>
+      <b>Value:</b>
+      <%= userconfig.value %>
+    </p>
+<% end %>
+
+<h2>Add a config setting:</h2>
+<%= form_for([@user, @user.userconfigs.build]) do |f| %>
+    <div class="field">
+      <%= f.label :key %><br />
+      <%= f.text_field :key %>
+    </div>
+    <div class="field">
+      <%= f.label :value %><br />
+      <%= f.text_field :value %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

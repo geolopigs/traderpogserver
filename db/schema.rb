@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120703033558) do
+ActiveRecord::Schema.define(:version => 20120707064017) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -88,6 +88,16 @@ ActiveRecord::Schema.define(:version => 20120703033558) do
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
+
+  create_table "userconfigs", :force => true do |t|
+    t.string   "key"
+    t.string   "value"
+    t.integer  "user_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "userconfigs", ["user_id"], :name => "index_userconfigs_on_user_id"
 
   create_table "users", :force => true do |t|
     t.boolean  "member"

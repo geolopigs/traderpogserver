@@ -4,6 +4,8 @@ TraderPog::Application.routes.draw do
     member do
       get 'beacons'
     end
+
+    resources :userconfigs
   end
 
   resources :beacons
