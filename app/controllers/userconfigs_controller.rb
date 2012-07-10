@@ -25,10 +25,8 @@ class UserconfigsController < ApplicationController
     respond_to do |format|
       if @user.userconfigs.create(params[:userconfig])
         format.html { redirect_to @user, notice: 'Config was successfully created.' }
-        format.json { render json: @user, status: :created, location: @user }
       else
         format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
       end
     end
   end

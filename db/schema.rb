@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120707064017) do
+ActiveRecord::Schema.define(:version => 20120708212439) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -82,9 +82,12 @@ ActiveRecord::Schema.define(:version => 20120707064017) do
     t.float    "latitude"
     t.string   "img"
     t.integer  "region"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.integer  "user_id"
+    t.integer  "item_info_id"
+    t.integer  "supplymaxlevel"
+    t.integer  "supplyratelevel"
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"

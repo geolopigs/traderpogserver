@@ -16,19 +16,14 @@ class PostsController < ApplicationController
   def show
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, user_id")
-    @itemids = @post.post_items.all(:select => "item_info_id")
-    @items = @itemids.collect {
-        |itemid| ItemInfosHelper.getitembylocale(itemid.item_info_id, @language)
-    }
-    @item_locs = ItemLoc.where("locale = ?", "#{@language}")
+    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, user_id, item_info_id, supplymaxlevel, supplyratelevel")
 
     respond_to do |format|
       format.html   # show.html.erb
       format.json {
-        json_output = @post.as_json
-        json_output['items'] = @items.as_json
-        render json: json_output
+        @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
+        @item_loc = @item_info.item_locs.where("locale = ?", @language).select("locale, localized_name, localized_desc")
+        render json: @post.as_json.merge(@item_info.as_json.merge(@item_loc.first.as_json))
       }
     end
   end
@@ -55,17 +50,8 @@ class PostsController < ApplicationController
       # Check that the user exists first
       begin
         @user = User.find((params[:post])[:user_id])
-      rescue
-        @user = nil
-      end
-      if @user.nil?
-        # no corresponding user for this post. Not allowed.
-        @errormsg = { "errormsg" => "Userid does not exist" }
-        format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
-      else
+        @item_info = ItemInfo.find((params[:post])[:item_info_id])
         @post = Post.new(params[:post])
-
         if @post.save
           format.html { redirect_to @post, notice: 'Post was successfully created.' }
           format.json { render json: @post.as_json(:only => [:id]) }
@@ -73,6 +59,10 @@ class PostsController < ApplicationController
           format.html { render action: "new" }
           format.json { render json: @post.errors, status: :unprocessable_entity }
         end
+      rescue
+        @errormsg = { "errormsg" => "Data incorrect" }
+        format.html { render 'posts/error', status: :forbidden }
+        format.json { render json: @errormsg, status: :forbidden }
       end
     end
   end
