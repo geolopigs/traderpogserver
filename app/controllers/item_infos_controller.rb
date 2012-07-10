@@ -4,7 +4,9 @@ class ItemInfosController < ApplicationController
   def getitem(index)
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    ItemInfosHelper.getitembylocale(index, @language)
+    @item_info = ItemInfo.find(params[:id])
+    @item_loc = ItemInfosHelper.getitemloc(@item_info)
+    @item_info.as_json.merge(@item_loc.first.as_json)
   end
 
   # GET /item_infos
@@ -49,7 +51,6 @@ class ItemInfosController < ApplicationController
   # POST /item_infos
   # POST /item_infos.json
   def create
-    # JSON is not allowed to create item_infos. Must be done through the website.
     respond_to do |format|
       format.html {
         @item_info = ItemInfo.new(params[:item_info])
@@ -57,6 +58,19 @@ class ItemInfosController < ApplicationController
           redirect_to @item_info, notice: 'Item info was successfully created.'
         else
           render action: "new"
+        end
+      }
+      format.json {
+        if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+          @item_info = ItemInfo.new(params[:item_info])
+          if @item_info.save
+            render json: @item_info.as_json(:only => [:id])
+          else
+            render json: @item_info.errors, status: :unprocessable_entity
+          end
+        else
+          @errormsg = { "errormsg" => "Data incorrect" }
+          render json: @errormsg, status: :forbidden
         end
       }
     end

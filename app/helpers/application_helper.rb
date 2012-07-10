@@ -1,5 +1,11 @@
 module ApplicationHelper
 
+  @@key = "4788f50c-24fd-47d4-acf4-39933603995a"
+
+  def ApplicationHelper.validate_key(inputkey)
+    @@key.eql?(inputkey)
+  end
+
   ##
   # Returns the language preferred by the user.
   ##
