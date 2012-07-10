@@ -28,8 +28,8 @@ module ItemInfosHelper
     return item_info
   end
 
-  def ItemInfosHelper.getitemloc(item_info)
-    item_loc_array = item_info.item_locs.where("locale = ?", @language).select("locale, localized_name, localized_desc")
+  def ItemInfosHelper.getitemloc(item_info, language)
+    item_loc_array = item_info.item_locs.where("locale = ?", language).select("locale, localized_name, localized_desc")
     if item_loc_array.empty?
       # There is no corresponding item_loc for this item_info. Fake one for now to prevent failure.
       item_loc = ItemLoc.new

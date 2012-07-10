@@ -22,7 +22,7 @@ class PostsController < ApplicationController
       format.html   # show.html.erb
       format.json {
         @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
-        @item_loc = ItemInfosHelper.getitemloc(@item_info)
+        @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
         render json: @post.as_json.merge(@item_info.as_json.merge(@item_loc.first.as_json))
       }
     end

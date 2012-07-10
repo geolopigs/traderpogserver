@@ -1,35 +1,63 @@
 class ItemLocsController < ApplicationController
 
   def index
-    @item_info = ItemInfo.find(params[:item_info_id])
-    @item_locs = @item_info.item_locs
-
     respond_to do |format|
-      format.html { head :no_content }
-      format.json { render json: @item_locs.as_json }
+      begin
+        @item_info = ItemInfo.find(params[:item_info_id])
+        @item_locs = @item_info.item_locs
+        format.html { head :no_content }
+        format.json { render json: @item_locs.as_json }
+      rescue
+        @errormsg = { "errormsg" => "Data incorrect" }
+        format.html { render 'posts/error', status: :forbidden }
+        format.json { render json: @errormsg, status: :forbidden }
+      end
     end
   end
 
   def show
-    @item_info = ItemInfo.find(params[:item_info_id])
-    @item_loc = @item_info.item_locs.find(params[:id])
-
     respond_to do |format|
-      format.html { head :no_content }
-      format.json { render json: @item_loc.as_json }
+      begin
+        @item_info = ItemInfo.find(params[:item_info_id])
+        @item_loc = @item_info.item_locs.find(params[:id])
+        format.html { head :no_content }
+        format.json { render json: @item_loc.as_json }
+      rescue
+        @errormsg = { "errormsg" => "Data incorrect" }
+        format.html { render 'posts/error', status: :forbidden }
+        format.json { render json: @errormsg, status: :forbidden }
+      end
     end
   end
 
   def create
-    @item_info = ItemInfo.find(params[:item_info_id])
-
     respond_to do |format|
-      if @item_info.item_locs.create(params[:item_loc])
-        format.html { redirect_to @item_info, notice: 'Localized item information was successfully created.' }
-        format.json { render json: @item_info, status: :created, location: @item_info }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @item_info.errors, status: :unprocessable_entity }
+      begin
+        @item_info = ItemInfo.find(params[:item_info_id])
+        format.html {
+          if @item_info.item_locs.create(params[:item_loc])
+            redirect_to @item_info, notice: 'Localized item information was successfully created.'
+          else
+            render action: "new"
+          end
+        }
+        format.json {
+          if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+            @item_loc = @item_info.item_locs.create(params[:item_loc])
+            if @item_loc.valid?
+              render json: @item_loc.as_json(:only => [:id])
+            else
+              render json: @item_info.errors, status: :unprocessable_entity
+            end
+          else
+            @errormsg = { "errormsg" => "Data incorrect" }
+            render json: @errormsg, status: :forbidden
+          end
+        }
+      rescue
+        @errormsg = { "errormsg" => "Data incorrect" }
+        format.html { render 'posts/error', status: :forbidden }
+        format.json { render json: @errormsg, status: :forbidden }
       end
     end
   end
