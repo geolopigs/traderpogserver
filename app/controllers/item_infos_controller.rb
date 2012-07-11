@@ -105,13 +105,19 @@ class ItemInfosController < ApplicationController
     end
   end
 
-  # GET /item_infos/random
-  def random
-    count = ItemInfo.count
-    index = rand(count) + 1
+  # GET /item_infos/tier
+  def tier
+    @tier = request.headers["Item-Tier"]
+    @item_infos = ItemInfo.where("tier = ?", Integer(@tier)).select("id, price, supplymax, supplyrate, multiplier")
+    @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
+
+    @tiered_items = @item_infos.collect { |item_info|
+      item_info.as_json.merge(ItemInfosHelper.getitemloc(item_info, @language).first.as_json)
+    }
+
     respond_to do |format|
       format.json {
-        render json: getitem(index)
+        render json: @tiered_items.as_json
       }
     end
   end

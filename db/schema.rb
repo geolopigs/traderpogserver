@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120708212439) do
+ActiveRecord::Schema.define(:version => 20120710231935) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(:version => 20120708212439) do
     t.integer  "supplymax"
     t.integer  "supplyrate"
     t.integer  "multiplier"
+    t.integer  "tier"
   end
 
   create_table "item_locs", :force => true do |t|

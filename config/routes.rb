@@ -24,7 +24,7 @@ TraderPog::Application.routes.draw do
 
   resources :item_infos do
     collection do
-      get 'random'
+      get 'tier'
     end
 
     resources :item_locs
