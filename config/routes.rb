@@ -5,6 +5,10 @@ TraderPog::Application.routes.draw do
       get 'beacons'
     end
 
+    collection do
+      get 'facebook'
+    end
+
     resources :userconfigs
   end
 

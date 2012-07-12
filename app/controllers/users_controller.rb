@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class UsersController < ApplicationController
   # GET /users
   # GET /users.json
@@ -6,7 +8,6 @@ class UsersController < ApplicationController
       format.html { # index.html.erb
         @users = User.all
       }
-      #format.json { render json: @users }
     end
   end
 
@@ -17,7 +18,7 @@ class UsersController < ApplicationController
       begin
         @user = User.find(params[:id])
         format.html # show.html.erb
-        format.json { render json: @user }
+        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email]) }
       rescue
         format.html { redirect_to users_url }
         format.json { head :no_content }
@@ -43,6 +44,17 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+
+    if !(ApplicationHelper.validate_key(request.headers["Validation-Key"]))
+      # If the validation key is there, then this is a test app talking to us, so
+      # accept whatever secret key is passed in. Otherwise, generate a random key.
+      (params[:user])[:secretkey] = SecureRandom.uuid
+    end
+
+    # initialize bucks to be 0 and member to be false
+    (params[:user])[:bucks] = 0
+    (params[:user])[:member] = false
+
     @user = User.new(params[:user])
 
     respond_to do |format|
@@ -51,7 +63,7 @@ class UsersController < ApplicationController
         # that users are only ever created via the JSON API. The website interface
         # should only be used for debugging purposes.
         format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render json: @user.as_json(:only => [:id]) }
+        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey]) }
       else
         format.html { render action: "new" }
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -67,8 +79,7 @@ class UsersController < ApplicationController
         @user = User.find(params[:id])
         if @user.update_attributes(params[:user])
           format.html { redirect_to @user, notice: 'User was successfully updated.' }
-          format.json { head :no_content }
-          #format.json { render json: @user.as_json(:only => [:id]) }
+          format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email]) }
         else
           # Some error happened while trying to update the user
           format.html { render action: "edit" }
@@ -91,6 +102,20 @@ class UsersController < ApplicationController
         @user.destroy
         redirect_to users_url
       }
+    end
+  end
+
+  # GET /users/facebook
+  def facebook
+    respond_to do |format|
+
+      facebookid = request.headers["Facebook-Id"]
+      if facebookid
+        @user = User.where("fbid = ?", "#{facebookid}").first
+        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])}
+      else
+        format.json { render :status => 400, :json => { :status => :error, :message => "Not found!" }}
+      end
     end
   end
 
