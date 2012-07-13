@@ -54,7 +54,7 @@ class UsersController < ApplicationController
       (params[:user])[:secretkey] = SecureRandom.uuid
     end
 
-    puts param[:user]
+    puts params[:user]
 
     # initialize bucks to be 0 and member to be false
     (params[:user])[:bucks] = 0
