@@ -54,6 +54,8 @@ class UsersController < ApplicationController
       (params[:user])[:secretkey] = SecureRandom.uuid
     end
 
+    puts param[:user]
+
     # initialize bucks to be 0 and member to be false
     (params[:user])[:bucks] = 0
     (params[:user])[:member] = false
@@ -69,7 +71,10 @@ class UsersController < ApplicationController
         format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey]) }
       else
         format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
+        format.json {
+          puts @user.errors
+          render json: @user.errors, status: :unprocessable_entity
+        }
       end
     end
   end
