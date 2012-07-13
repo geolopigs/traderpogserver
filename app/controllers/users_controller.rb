@@ -45,22 +45,20 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
 
-    puts params
-    puts params[:user]
+    # Make a copy of the user params
+    user_params = (params[:user]).clone
 
-    if !(ApplicationHelper.validate_key(request.headers["Validation-Key"]))
+    unless ApplicationHelper.validate_key(request.headers["Validation-Key"])
       # If the validation key is there, then this is a test app talking to us, so
       # accept whatever secret key is passed in. Otherwise, generate a random key.
-      (params[:user])[:secretkey] = SecureRandom.uuid
+      user_params.merge!(:secretkey => SecureRandom.uuid)
     end
 
-    puts params[:user]
-
     # initialize bucks to be 0 and member to be false
-    (params[:user])[:bucks] = 0
-    (params[:user])[:member] = false
+    user_params.merge!(:bucks => 0, :member => false)
 
-    @user = User.new(params[:user])
+    # Create the new user
+    @user = User.new(user_params)
 
     respond_to do |format|
       if @user.save
