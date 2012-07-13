@@ -45,6 +45,9 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
 
+    puts params
+    puts params[:user]
+
     if !(ApplicationHelper.validate_key(request.headers["Validation-Key"]))
       # If the validation key is there, then this is a test app talking to us, so
       # accept whatever secret key is passed in. Otherwise, generate a random key.
