@@ -45,8 +45,6 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
 
-    puts params
-
     # Make a copy of the user params
     user_params = (params[:user]).clone
 
