@@ -12,11 +12,16 @@ class ItemInfosController < ApplicationController
   # GET /item_infos
   # GET /item_infos.json
   def index
-    @item_infos = ItemInfo.all
+    @item_infos = ItemInfo.all(:select => "id, price, supplymax, supplyrate, multiplier")
+    @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
+
+    @complete_items = @item_infos.collect { |item_info|
+      item_info.as_json.merge(ItemInfosHelper.getitemloc(item_info, @language).first.as_json)
+    }
 
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @item_infos }
+      format.json { render json: @complete_items }
     end
   end
 
