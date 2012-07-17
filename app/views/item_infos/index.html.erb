@@ -2,6 +2,7 @@
 
 <table>
   <tr>
+    <th>Tier</th>
     <th>Price</th>
     <th>SupplyMax</th>
     <th>SupplyRate</th>
@@ -13,6 +14,7 @@
 
 <% @item_infos.each do |item_info| %>
   <tr>
+    <td><%= item_info.tier %></td>
     <td><%= item_info.price %></td>
     <td><%= item_info.supplymax %></td>
     <td><%= item_info.supplyrate %></td>
