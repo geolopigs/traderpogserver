@@ -1,0 +1,2 @@
+module UserFlyersHelper
+end

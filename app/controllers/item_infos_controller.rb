@@ -4,7 +4,7 @@ class ItemInfosController < ApplicationController
   def getitem(index)
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @item_info = ItemInfo.find(params[:id])
+    @item_info = ItemInfo.find(index, :select => "id, price, supplymax, supplyrate, multiplier")
     @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
     @item_info.as_json.merge(@item_loc.first.as_json)
   end

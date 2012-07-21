@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120712002712) do
+ActiveRecord::Schema.define(:version => 20120720141241) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -44,6 +44,22 @@ ActiveRecord::Schema.define(:version => 20120712002712) do
   end
 
   add_index "flyer_locs", ["flyer_info_id"], :name => "index_flyer_locs_on_flyer_info_id"
+
+  create_table "flyer_paths", :force => true do |t|
+    t.integer  "user_flyer_info_id"
+    t.integer  "post1"
+    t.integer  "post2"
+    t.float    "longitude1"
+    t.float    "latitude1"
+    t.float    "longitude2"
+    t.float    "latitude2"
+    t.integer  "storms"
+    t.integer  "stormed"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  add_index "flyer_paths", ["user_flyer_info_id"], :name => "index_flyer_paths_on_user_flyer_info_id"
 
   create_table "item_infos", :force => true do |t|
     t.integer  "price"
@@ -92,6 +108,16 @@ ActiveRecord::Schema.define(:version => 20120712002712) do
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
+
+  create_table "user_flyers", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "flyer_info_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "user_flyers", ["flyer_info_id"], :name => "index_user_flyers_on_flyer_info_id"
+  add_index "user_flyers", ["user_id"], :name => "index_user_flyers_on_user_id"
 
   create_table "userconfigs", :force => true do |t|
     t.string   "key"

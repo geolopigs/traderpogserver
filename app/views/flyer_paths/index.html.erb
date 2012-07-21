@@ -1,0 +1,39 @@
+<h1>Listing flyer_paths</h1>
+
+<table>
+  <tr>
+    <th>Flyer info</th>
+    <th>Post1</th>
+    <th>Post2</th>
+    <th>Longitude1</th>
+    <th>Latitude1</th>
+    <th>Longitude2</th>
+    <th>Latitude2</th>
+    <th>Storms</th>
+    <th>Stormed</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @flyer_paths.each do |flyer_path| %>
+  <tr>
+    <td><%= flyer_path.flyer_info %></td>
+    <td><%= flyer_path.post1 %></td>
+    <td><%= flyer_path.post2 %></td>
+    <td><%= flyer_path.longitude1 %></td>
+    <td><%= flyer_path.latitude1 %></td>
+    <td><%= flyer_path.longitude2 %></td>
+    <td><%= flyer_path.latitude2 %></td>
+    <td><%= flyer_path.storms %></td>
+    <td><%= flyer_path.stormed %></td>
+    <td><%= link_to 'Show', flyer_path %></td>
+    <td><%= link_to 'Edit', edit_flyer_path_path(flyer_path) %></td>
+    <td><%= link_to 'Destroy', flyer_path, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Flyer path', new_flyer_path_path %>

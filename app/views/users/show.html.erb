@@ -48,11 +48,30 @@
 <%= form_for([@user, @user.userconfigs.build]) do |f| %>
     <div class="field">
       <%= f.label :key %><br />
-      <%= f.text_field :key %>
+      <%= f.number_field :key %>
     </div>
     <div class="field">
       <%= f.label :value %><br />
       <%= f.text_field :value %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+<h2>Flyers</h2>
+<% @user.user_flyers.each do |userflyer| %>
+    <p>
+      <b>Flyer:</b>
+      <%= userflyer.flyer_info_id %>
+    </p>
+<% end %>
+
+<h2>Add a flyer:</h2>
+<%= form_for([@user, @user.user_flyers.build]) do |f| %>
+    <div class="field">
+      <%= f.label :flyer_info_id %><br />
+      <%= f.number_field :flyer_info_id %>
     </div>
     <div class="actions">
       <%= f.submit %>

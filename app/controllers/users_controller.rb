@@ -16,9 +16,14 @@ class UsersController < ApplicationController
   def show
     respond_to do |format|
       begin
-        @user = User.find(params[:id])
-        format.html # show.html.erb
-        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email]) }
+        format.html { # show.html.erb
+          @user = User.find(params[:id])
+        }
+        format.json {
+          @user = User.find(params[:id], :select => "id, fbid, member, bucks, email")
+          flyers = {"flyers" => @user.user_flyers.select(:flyer_info_id)}
+          render json: @user.as_json(:except => [:id]).merge(flyers)
+        }
       rescue
         format.html { redirect_to users_url }
         format.json { head :no_content }
@@ -118,7 +123,10 @@ class UsersController < ApplicationController
       facebookid = request.headers["Facebook-Id"]
       if facebookid
         @user = User.where("fbid = ?", "#{facebookid}").first
-        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])}
+        format.json {
+          flyers = {"flyers" => @user.user_flyers.select(:flyer_info_id)}
+          render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey]).merge(flyers)
+        }
       else
         format.json { render :status => 400, :json => { :status => :error, :message => "Not found!" }}
       end

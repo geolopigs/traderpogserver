@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  flyer_info: 
+  post1: 1
+  post2: 1
+  longitude1: 1.5
+  latitude1: 1.5
+  longitude2: 1.5
+  latitude2: 1.5
+  storms: 1
+  stormed: 1
+
+two:
+  flyer_info: 
+  post1: 1
+  post2: 1
+  longitude1: 1.5
+  latitude1: 1.5
+  longitude2: 1.5
+  latitude2: 1.5
+  storms: 1
+  stormed: 1

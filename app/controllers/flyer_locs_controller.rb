@@ -1,12 +1,12 @@
-class ItemLocsController < ApplicationController
+class FlyerLocsController < ApplicationController
 
   def index
     respond_to do |format|
       begin
-        @item_info = ItemInfo.find(params[:item_info_id])
-        @item_locs = @item_info.item_locs
+        @flyer_info = FlyerInfo.find(params[:flyer_info_id])
+        @flyer_locs = @flyer_info.flyer_locs
         format.html { head :no_content }
-        format.json { render json: @item_locs.as_json }
+        format.json { render json: @flyer_locs.as_json }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
@@ -18,10 +18,10 @@ class ItemLocsController < ApplicationController
   def show
     respond_to do |format|
       begin
-        @item_info = ItemInfo.find(params[:item_info_id])
-        @item_loc = @item_info.item_locs.find(params[:id])
+        @flyer_info = FlyerInfo.find(params[:flyer_info_id])
+        @flyer_loc = @flyer_info.flyer_locs.find(params[:id])
         format.html { head :no_content }
-        format.json { render json: @item_loc.as_json }
+        format.json { render json: @flyer_loc.as_json }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
@@ -33,21 +33,21 @@ class ItemLocsController < ApplicationController
   def create
     respond_to do |format|
       begin
-        @item_info = ItemInfo.find(params[:item_info_id])
+        @flyer_info = FlyerInfo.find(params[:flyer_info_id])
         format.html {
-          if @item_info.item_locs.create(params[:item_loc])
-            redirect_to @item_info, notice: 'Localized item information was successfully created.'
+          if @flyer_info.flyer_locs.create(params[:flyer_loc])
+            redirect_to @flyer_info, notice: 'Localized flyer information was successfully created.'
           else
             render action: "new"
           end
         }
         format.json {
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-            @item_loc = @item_info.item_locs.create(params[:item_loc])
-            if @item_loc.valid?
-              render json: @item_loc.as_json(:only => [:id])
+            @flyer_loc = @flyer_info.flyer_locs.create(params[:flyer_loc])
+            if @flyer_loc.valid?
+              render json: @flyer_loc.as_json(:only => [:id])
             else
-              render json: @item_loc.errors, status: :unprocessable_entity
+              render json: @flyer_loc.errors, status: :unprocessable_entity
             end
           else
             @errormsg = { "errormsg" => "Data incorrect" }
@@ -61,5 +61,4 @@ class ItemLocsController < ApplicationController
       end
     end
   end
-
 end
