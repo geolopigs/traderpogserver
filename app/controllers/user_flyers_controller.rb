@@ -5,7 +5,7 @@ class UserFlyersController < ApplicationController
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @userflyers.as_json(:only => [:flyer_info_id]) }
+      format.json { render json: @userflyers.as_json(:only => [:id, :flyer_info_id]) }
     end
   end
 
@@ -15,7 +15,7 @@ class UserFlyersController < ApplicationController
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @userconfig.as_json(:only => [:flyer_info_id]) }
+      format.json { render json: @userconfig.as_json(:only => [:id, :flyer_info_id]) }
     end
   end
 
@@ -23,10 +23,13 @@ class UserFlyersController < ApplicationController
     @user = User.find(params[:user_id])
 
     respond_to do |format|
-      if @user.user_flyers.create(params[:user_flyer])
+      user_flyer = @user.user_flyers.create(params[:user_flyer])
+      if user_flyer
         format.html { redirect_to @user, notice: 'Flyer was successfully created.' }
+        format.json { render json: user_flyer.as_json(:only => [:id]) }
       else
         format.html { render action: "new" }
+        format.json { render json: user_flyer.errors, status: :unprocessable_entity }
       end
     end
   end
