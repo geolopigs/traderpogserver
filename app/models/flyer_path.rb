@@ -1,3 +1,3 @@
 class FlyerPath < ActiveRecord::Base
-  belongs_to :flyer_info
+  belongs_to :user_flyer
 end

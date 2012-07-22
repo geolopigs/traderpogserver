@@ -1,7 +1,7 @@
 class CreateFlyerPaths < ActiveRecord::Migration
   def change
     create_table :flyer_paths do |t|
-      t.references :user_flyer_info
+      t.references :user_flyer
       t.integer :post1
       t.integer :post2
       t.float :longitude1
@@ -13,6 +13,6 @@ class CreateFlyerPaths < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :flyer_paths, :user_flyer_info_id
+    add_index :flyer_paths, :user_flyer_id
   end
 end

@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(:version => 20120720141241) do
   add_index "flyer_locs", ["flyer_info_id"], :name => "index_flyer_locs_on_flyer_info_id"
 
   create_table "flyer_paths", :force => true do |t|
-    t.integer  "user_flyer_info_id"
+    t.integer  "user_flyer_id"
     t.integer  "post1"
     t.integer  "post2"
     t.float    "longitude1"
@@ -55,11 +55,11 @@ ActiveRecord::Schema.define(:version => 20120720141241) do
     t.float    "latitude2"
     t.integer  "storms"
     t.integer  "stormed"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
-  add_index "flyer_paths", ["user_flyer_info_id"], :name => "index_flyer_paths_on_user_flyer_info_id"
+  add_index "flyer_paths", ["user_flyer_id"], :name => "index_flyer_paths_on_user_flyer_id"
 
   create_table "item_infos", :force => true do |t|
     t.integer  "price"
