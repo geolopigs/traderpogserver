@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+
   # GET /posts
   # GET /posts.json
   def index
@@ -8,6 +9,17 @@ class PostsController < ApplicationController
       format.html { # index.html.erb
         @posts = Post.all
       }
+      format.json {
+      @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
+       user_id = request.headers["User-Id"]
+       if user_id
+          @posts = Post.where("user_id = ?", user_id)
+          render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supplymaxlevel, :supplyratelevel])
+        else
+          @errormsg = { "errormsg" => "Missing user" }
+          render json: @errormsg, status: :unprocessable_entity
+        end
+      }
     end
   end
 
@@ -16,14 +28,14 @@ class PostsController < ApplicationController
   def show
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, region, user_id, item_info_id, supplymaxlevel, supplyratelevel")
+    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel")
 
     respond_to do |format|
       format.html   # show.html.erb
       format.json {
         @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
         @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
-        render json: @post.as_json.merge(@item_info.as_json.merge(@item_loc.first.as_json))
+        render json: @post.as_json.merge(@item_info.as_json(:except => [:id]).merge(@item_loc.first.as_json))
       }
     end
   end
