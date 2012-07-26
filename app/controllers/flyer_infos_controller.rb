@@ -4,7 +4,7 @@ class FlyerInfosController < ApplicationController
   def getflyer(index)
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @flyer_info = FlyerInfo.find(index, :select => "id, capacity, speed, stormresist, multiplier")
+    @flyer_info = FlyerInfo.find(index, :select => "id, capacity, speed, stormresist, multiplier, price, tier")
     @flyer_loc = FlyerInfosHelper.getflyerloc(@flyer_info, @language)
     @flyer_info.as_json.merge(@flyer_loc.first.as_json)
   end
@@ -12,7 +12,7 @@ class FlyerInfosController < ApplicationController
   # GET /flyer_infos
   # GET /flyer_infos.json
   def index
-    @flyer_infos = FlyerInfo.all(:select => "id, capacity, speed, stormresist, multiplier")
+    @flyer_infos = FlyerInfo.all(:select => "id, capacity, speed, stormresist, multiplier, price, tier")
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
 
     @complete_flyers = @flyer_infos.collect { |flyer_info|

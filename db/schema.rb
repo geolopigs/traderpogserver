@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120720141241) do
+ActiveRecord::Schema.define(:version => 20120726063923) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(:version => 20120720141241) do
     t.integer  "multiplier"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.integer  "price"
+    t.integer  "tier"
   end
 
   create_table "flyer_locs", :force => true do |t|

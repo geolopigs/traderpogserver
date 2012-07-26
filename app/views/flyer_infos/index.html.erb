@@ -2,6 +2,8 @@
 
 <table>
   <tr>
+    <th>Price</th>
+    <th>Tier</th>
     <th>Capacity</th>
     <th>Speed</th>
     <th>Stormresist</th>
@@ -13,6 +15,8 @@
 
 <% @flyer_infos.each do |flyer_info| %>
   <tr>
+    <td><%= flyer_info.price %></td>
+    <td><%= flyer_info.tier %></td>
     <td><%= flyer_info.capacity %></td>
     <td><%= flyer_info.speed %></td>
     <td><%= flyer_info.stormresist %></td>
