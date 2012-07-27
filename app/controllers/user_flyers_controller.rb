@@ -5,7 +5,13 @@ class UserFlyersController < ApplicationController
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @userflyers.as_json(:only => [:id, :flyer_info_id]) }
+      format.json {
+        @complete_userflyers = @userflyers.collect { |userflyer|
+          path = UserFlyersHelper.getflyerpaths(userflyer, 1)
+          userflyer.as_json(:only => [:id, :flyer_info_id, :test]).merge(path)
+        }
+        render json: @complete_userflyers
+      }
     end
   end
 
@@ -15,7 +21,10 @@ class UserFlyersController < ApplicationController
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @userflyer.as_json(:only => [:id, :flyer_info_id]) }
+      format.json {
+        path = UserFlyersHelper.getflyerpaths(@userflyer, 1)
+        render json: @userflyer.as_json(:only => [:id, :flyer_info_id]).merge(path)
+      }
     end
   end
 
@@ -23,14 +32,44 @@ class UserFlyersController < ApplicationController
     @user = User.find(params[:user_id])
 
     respond_to do |format|
-      user_flyer = @user.user_flyers.create(params[:user_flyer])
-      if user_flyer
-        format.html { redirect_to @user, notice: 'Flyer was successfully created.' }
-        format.json { render json: user_flyer.as_json(:only => [:id]) }
-      else
-        format.html { render action: "new" }
-        format.json { render json: user_flyer.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        user_flyer = @user.user_flyers.create(params[:user_flyer])
+        if user_flyer
+          redirect_to @user, notice: 'Flyer was successfully created.'
+        else
+          render action: "new"
+        end
+      }
+      format.json {
+        postid = request.headers["Init-Post-Id"]
+        if postid
+          user_flyer = @user.user_flyers.create(params[:user_flyer])
+          if user_flyer
+
+            # create an initial position for the Flyer located at some Post
+            flyer_path = { "post1" => postid, "post2" => postid, "storms" => 0, "stormed" => 0 }
+            flyer_path_record = user_flyer.flyer_paths.create(flyer_path)
+
+            render json: user_flyer.as_json(:only => [:id])
+          else
+            render json: user_flyer.errors, status: :unprocessable_entity
+          end
+        else
+          @errormsg = { "errormsg" => "Missing Post ID" }
+          render json: @errormsg, status: :unprocessable_entity
+        end
+      }
+    end
+  end
+
+  def destroy
+    @user = User.find(params[:user_id])
+    @userflyer = @user.user_flyers.find(params[:id])
+    @userflyer.destroy
+
+    respond_to do |format|
+      format.html { redirect_to @user }
+      format.json { head :no_content }
     end
   end
 end
