@@ -7,7 +7,11 @@ class UserFlyersController < ApplicationController
       format.html { head :no_content }
       format.json {
         @complete_userflyers = @userflyers.collect { |userflyer|
-          path = UserFlyersHelper.getflyerpaths(userflyer, 1)
+          if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+            path = UserFlyersHelper.getflyerpaths(userflyer, 1, true)
+          else
+            path = UserFlyersHelper.getflyerpaths(userflyer, 1, false)
+          end
           userflyer.as_json(:only => [:id, :flyer_info_id, :test]).merge(path)
         }
         render json: @complete_userflyers
@@ -22,7 +26,11 @@ class UserFlyersController < ApplicationController
     respond_to do |format|
       format.html { head :no_content }
       format.json {
-        path = UserFlyersHelper.getflyerpaths(@userflyer, 1)
+        if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+          path = UserFlyersHelper.getflyerpaths(@userflyer, 1, true)
+        else
+          path = UserFlyersHelper.getflyerpaths(@userflyer, 1, false)
+        end
         render json: @userflyer.as_json(:only => [:id, :flyer_info_id]).merge(path)
       }
     end

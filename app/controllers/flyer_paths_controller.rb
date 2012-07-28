@@ -2,22 +2,38 @@ class FlyerPathsController < ApplicationController
   def index
     @user = User.find(params[:user_id])
     @userflyer = @user.user_flyers.find(params[:user_flyer_id])
-    @flyer_paths = @userflyer.flyer_paths;
+    pathscount = request.headers["Flyer-Paths-Count"]
+    if pathscount == 0
+      pathscount = 1
+    end
+
+    if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+      # this is a test response, don't send the created_at field
+      path = @userflyer.flyer_paths.select("post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+    else
+      path = @userflyer.flyer_paths.select("created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+    end
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @flyer_paths.as_json(:only => [:id, :post1, :post2, :longitude1, :latitude1, :longitude2, :latitude2, :storms, :stormed]) }
+      format.json { render json: path.as_json }
     end
   end
 
   def show
     @user = User.find(params[:user_id])
     @userflyer = @user.user_flyers.find(params[:user_flyer_id])
-    @flyer_path = @userflyer.flyer_paths(params[:id])
+
+    if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+      # this is a test response, don't send the created_at field
+      path = @userflyer.flyer_paths(params[:id]).select("post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+    else
+      path = @userflyer.flyer_paths(params[:id]).select("created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+    end
 
     respond_to do |format|
       format.html { head :no_content }
-      format.json { render json: @flyer_path.as_json(:only => [:id, :post1, :post2, :longitude1, :latitude1, :longitude2, :latitude2, :storms, :stormed]) }
+      format.json { render json: path.as_json }
     end
   end
 
