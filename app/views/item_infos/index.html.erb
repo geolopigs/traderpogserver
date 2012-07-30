@@ -7,6 +7,8 @@
     <th>SupplyMax</th>
     <th>SupplyRate</th>
     <th>Multiplier</th>
+    <th>Image</th>
+    <th>Disabled</th>
     <th></th>
     <th></th>
     <th></th>
@@ -19,6 +21,8 @@
     <td><%= item_info.supplymax %></td>
     <td><%= item_info.supplyrate %></td>
     <td><%= item_info.multiplier %></td>
+    <td><%= item_info.img %></td>
+    <td><%= item_info.disabled %></td>
     <td><%= link_to 'Show', item_info %></td>
     <td><%= link_to 'Edit', edit_item_info_path(item_info) %></td>
     <td><%= link_to 'Destroy', item_info, confirm: 'Are you sure?', method: :delete %></td>

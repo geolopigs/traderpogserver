@@ -4,7 +4,7 @@ class ItemInfosController < ApplicationController
   def getitem(index)
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @item_info = ItemInfo.find(index, :select => "id, price, supplymax, supplyrate, multiplier, tier")
+    @item_info = ItemInfo.find(index, :select => "id, img, price, supplymax, supplyrate, multiplier, tier, disabled")
     @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
     @item_info.as_json.merge(@item_loc.first.as_json)
   end
@@ -12,7 +12,7 @@ class ItemInfosController < ApplicationController
   # GET /item_infos
   # GET /item_infos.json
   def index
-    @item_infos = ItemInfo.all(:select => "id, price, supplymax, supplyrate, multiplier, tier")
+    @item_infos = ItemInfo.all(:select => "id, img, price, supplymax, supplyrate, multiplier, tier, disabled")
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
 
     @complete_items = @item_infos.collect { |item_info|
@@ -113,7 +113,7 @@ class ItemInfosController < ApplicationController
   # GET /item_infos/tier
   def tier
     @tier = request.headers["Item-Tier"]
-    @item_infos = ItemInfo.where("tier = ?", Integer(@tier)).select("id, price, supplymax, supplyrate, multiplier, tier")
+    @item_infos = ItemInfo.where("tier = ?", Integer(@tier)).select("id, img, price, supplymax, supplyrate, multiplier, tier, disabled")
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
 
     @tiered_items = @item_infos.collect { |item_info|
