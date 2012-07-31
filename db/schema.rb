@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120730160018) do
+ActiveRecord::Schema.define(:version => 20120730235517) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20120730160018) do
     t.integer  "tier"
     t.string   "topimg"
     t.string   "sideimg"
+    t.boolean  "disabled"
   end
 
   create_table "flyer_locs", :force => true do |t|
@@ -111,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20120730160018) do
     t.integer  "item_info_id"
     t.integer  "supplymaxlevel"
     t.integer  "supplyratelevel"
+    t.boolean  "disabled"
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"

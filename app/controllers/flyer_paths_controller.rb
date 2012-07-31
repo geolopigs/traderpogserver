@@ -40,15 +40,23 @@ class FlyerPathsController < ApplicationController
   def create
     @user = User.find(params[:user_id])
     @userflyer = @user.user_flyers.find(params[:user_flyer_id])
+    post1_enabled = (!params[:post1] || !(Post.find(params[:post1]).disabled))
+    post2_enabled = (!params[:post2] || !(Post.find(params[:post2]).disabled))
 
     respond_to do |format|
-      flyer_path = @userflyer.flyer_paths.create(params[:flyer_path])
-      if flyer_path
-        format.html { redirect_to @user, notice: 'Flyer path was successfully created.' }
-        format.json { render json: flyer_path.as_json(:only => [:id]) }
+      if (post1_enabled && post2_enabled)
+        flyer_path = @userflyer.flyer_paths.create(params[:flyer_path])
+        if flyer_path
+          format.html { redirect_to @user, notice: 'Flyer path was successfully created.' }
+          format.json { render json: flyer_path.as_json(:only => [:id]) }
+        else
+          format.html { render action: "new" }
+          format.json { render json: flyer_path.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render action: "new" }
-        format.json { render json: flyer_path.errors, status: :unprocessable_entity }
+        @errormsg = { "errormsg" => "Post not found" }
+        format.html { render 'posts/error', status: :not_found }
+        format.json { render json: @errormsg, status: :not_found }
       end
     end
   end

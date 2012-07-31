@@ -64,20 +64,28 @@ class PostsController < ApplicationController
         @user = User.find((params[:post])[:user_id])
         @item_info = ItemInfo.find((params[:post])[:item_info_id])
 
-        # Make a copy of the post params
-        post_params = (params[:post]).clone
+        format.html {
+          @post = Post.new(params[:post])
+          if @post.save
+            redirect_to @post, notice: 'Post was successfully created.'
+          else
+            render action: "new"
+          end
+        }
+        format.json {
+          # Make a copy of the post params
+          post_params = (params[:post]).clone
 
-        # initialize bucks to be 0 and member to be false
-        post_params.merge!(:name => "", :img => "default", :region => 0, :supplymaxlevel => 1, :supplyratelevel => 1)
+          # initialize bucks to be 0 and member to be false
+          post_params.merge!(:name => "", :img => "default", :region => 0, :supplymaxlevel => 1, :supplyratelevel => 1, :disabled => false)
 
-        @post = Post.new(post_params)
-        if @post.save
-          format.html { redirect_to @post, notice: 'Post was successfully created.' }
-          format.json { render json: @post.as_json(:only => [:id, :img, :supplymaxlevel, :supplyratelevel]) }
-        else
-          format.html { render action: "new" }
-          format.json { render json: @post.errors, status: :unprocessable_entity }
-        end
+          @post = Post.new(post_params)
+          if @post.save
+            render json: @post.as_json(:only => [:id, :img, :supplymaxlevel, :supplyratelevel])
+          else
+            render json: @post.errors, status: :unprocessable_entity
+          end
+        }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
