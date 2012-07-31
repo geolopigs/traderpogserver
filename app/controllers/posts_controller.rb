@@ -28,11 +28,13 @@ class PostsController < ApplicationController
   def show
     # Get the Accept-Language first. If it doesn't exist, default to en
     @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-    @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel")
 
     respond_to do |format|
-      format.html   # show.html.erb
+      format.html { # show.html.erb
+        @post = Post.find(params[:id])
+      }
       format.json {
+        @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel")
         @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
         @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
         render json: @post.as_json.merge(@item_info.as_json(:except => [:id]).merge(@item_loc.first.as_json))

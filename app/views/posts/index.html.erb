@@ -11,6 +11,7 @@
     <th>Item_info_id</th>
     <th>SupplyMaxLevel</th>
     <th>SupplyRateLevel</th>
+    <th>Disabled</th>
     <th></th>
     <th></th>
     <th></th>
@@ -27,6 +28,7 @@
     <td><%= post.item_info_id %></td>
     <td><%= post.supplymaxlevel %></td>
     <td><%= post.supplyratelevel %></td>
+    <td><%= post.disabled %></td>
     <td><%= link_to 'Show', post %></td>
     <td><%= link_to 'Edit', edit_post_path(post) %></td>
     <td><%= link_to 'Destroy', post, confirm: 'Are you sure?', method: :delete %></td>
