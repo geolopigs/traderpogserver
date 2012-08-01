@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120730235517) do
+ActiveRecord::Schema.define(:version => 20120801135922) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(:version => 20120730235517) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.string   "fbid"
-    t.string   "fb_friends"
+    t.text     "fb_friends"
     t.string   "email"
     t.string   "secretkey"
   end
