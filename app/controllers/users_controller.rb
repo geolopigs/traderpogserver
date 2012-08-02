@@ -21,8 +21,7 @@ class UsersController < ApplicationController
         }
         format.json {
           @user = User.find(params[:id], :select => "id, fbid, member, bucks, email")
-          flyers = {"flyers" => @user.user_flyers.select(:flyer_info_id)}
-          render json: @user.as_json(:except => [:id]).merge(flyers)
+          render json: @user.as_json(:except => [:id])
         }
       rescue
         format.html { redirect_to users_url }
@@ -124,11 +123,14 @@ class UsersController < ApplicationController
       if facebookid
         @user = User.where("fbid = ?", "#{facebookid}").first
         format.json {
-          flyers = {"flyers" => @user.user_flyers.select(:flyer_info_id)}
-          render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey]).merge(flyers)
+          if @user
+            render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])
+          else
+            render :status => 404, :json => { :status => :error, :message => "Not found!" }
+          end
         }
       else
-        format.json { render :status => 400, :json => { :status => :error, :message => "Not found!" }}
+        format.json { render :status => 404, :json => { :status => :error, :message => "Not found!" } }
       end
     end
   end

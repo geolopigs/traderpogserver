@@ -12,7 +12,7 @@ class UserFlyersController < ApplicationController
           else
             path = UserFlyersHelper.getflyerpaths(userflyer, 1, false)
           end
-          userflyer.as_json(:only => [:id, :flyer_info_id, :test]).merge(path)
+          userflyer.as_json(:only => [:id, :flyer_info_id]).merge(path)
         }
         render json: @complete_userflyers
       }
