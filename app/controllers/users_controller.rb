@@ -1,6 +1,22 @@
 require 'securerandom'
 
 class UsersController < ApplicationController
+
+  def fb_friends_helper(raw_friends)
+    # Takes a list of pipe delimited friend IDs and only returns the ones that
+    # are in the user database
+    friends_array = raw_friends.split("|")
+    trimmed_list = User.where(:fbid => friends_array).select("fbid")
+    available_friends = ""
+    trimmed_list.each do |friend|
+      if !(available_friends.empty?)
+        available_friends << "|"
+      end
+      available_friends << friend[:fbid]
+    end
+    available_friends
+  end
+
   # GET /users
   # GET /users.json
   def index
@@ -61,6 +77,13 @@ class UsersController < ApplicationController
     # initialize bucks to be 0 and member to be false
     user_params.merge!(:bucks => 0, :member => false)
 
+    # handle fb friends case
+    friends = user_params.delete(:fb_friends)
+    if friends
+      available_friends = fb_friends_helper(friends)
+      user_params.merge!(:fb_friends => available_friends)
+    end
+
     # Create the new user
     @user = User.new(user_params)
 
@@ -104,6 +127,13 @@ class UsersController < ApplicationController
           # remove fields that are not settable by calling api
           user_params.delete(:secretkey)
           user_params.delete(:member)
+
+          # handle fb friends case
+          friends = user_params.delete(:fb_friends)
+          if friends
+            available_friends = fb_friends_helper(friends)
+            user_params.merge!(:fb_friends => available_friends)
+          end
 
           if @user.update_attributes(user_params)
             render json: @user.as_json(:only => [:id])
