@@ -85,21 +85,37 @@ class UsersController < ApplicationController
   # PUT /users/1.json
   def update
     respond_to do |format|
-      begin
+      format.html {
         @user = User.find(params[:id])
         if @user.update_attributes(params[:user])
-          format.html { redirect_to @user, notice: 'User was successfully updated.' }
-          format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email]) }
+          redirect_to @user, notice: 'User was successfully updated.'
         else
           # Some error happened while trying to update the user
-          format.html { render action: "edit" }
-          format.json { render json: @user.errors, status: :unprocessable_entity }
+          render action: "edit"
         end
-      rescue
-        # User does not exist.
-        format.html { render action: "edit" }
-        format.json { render json: "User error", status: :unprocessable_entity }
-      end
+      }
+      format.json {
+        begin
+          @user = User.find(params[:id])
+
+          # Make a copy of the user params
+          user_params = (params[:user]).clone
+
+          # remove fields that are not settable by calling api
+          user_params.delete(:secretkey)
+          user_params.delete(:member)
+
+          if @user.update_attributes(user_params)
+            render json: @user.as_json(:only => [:id])
+          else
+            # Some error happened while trying to update the user
+            render json: @user.errors, status: :unprocessable_entity
+          end
+        rescue
+          # User does not exist.
+          render json: "User error", status: :unprocessable_entity
+        end
+      }
     end
   end
 
