@@ -48,7 +48,14 @@ class FlyerPathsController < ApplicationController
         flyer_path = @userflyer.flyer_paths.create(params[:flyer_path])
         if flyer_path
           format.html { redirect_to @user, notice: 'Flyer path was successfully created.' }
-          format.json { render json: flyer_path.as_json(:only => [:id]) }
+          format.json {
+            if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+              # this is a test response, don't send the created_at field
+              render json: flyer_path.as_json(:only => [:id])
+            else
+              render json: flyer_path.as_json(:only => [:id, :created_at])
+            end
+          }
         else
           format.html { render action: "new" }
           format.json { render json: flyer_path.errors, status: :unprocessable_entity }
