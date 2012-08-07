@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120801135922) do
+ActiveRecord::Schema.define(:version => 20120806233346) do
 
   create_table "beacons", :force => true do |t|
     t.boolean  "used"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20120801135922) do
     t.integer  "stormed"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.boolean  "done"
   end
 
   add_index "flyer_paths", ["user_flyer_id"], :name => "index_flyer_paths_on_user_flyer_id"

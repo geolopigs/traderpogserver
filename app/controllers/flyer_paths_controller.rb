@@ -9,9 +9,9 @@ class FlyerPathsController < ApplicationController
 
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
       # this is a test response, don't send the created_at field
-      path = @userflyer.flyer_paths.select("post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+      path = @userflyer.flyer_paths.select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
     else
-      path = @userflyer.flyer_paths.select("created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+      path = @userflyer.flyer_paths.select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
     end
 
     respond_to do |format|
@@ -26,9 +26,9 @@ class FlyerPathsController < ApplicationController
 
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
       # this is a test response, don't send the created_at field
-      path = @userflyer.flyer_paths(params[:id]).select("post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+      path = @userflyer.flyer_paths(params[:id]).select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
     else
-      path = @userflyer.flyer_paths(params[:id]).select("created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed")
+      path = @userflyer.flyer_paths(params[:id]).select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
     end
 
     respond_to do |format|
@@ -68,7 +68,7 @@ class FlyerPathsController < ApplicationController
     respond_to do |format|
       if @flyer_path.update_attributes(params[:flyer_path])
         format.html { redirect_to @user, notice: 'Flyer path was successfully updated.' }
-        format.json { head :no_content }
+        format.json { render json: @flyer_path.as_json(:only => [:id]) }
       else
         format.html { render action: "edit" }
         format.json { render json: @flyer_path.errors, status: :unprocessable_entity }

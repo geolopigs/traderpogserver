@@ -55,7 +55,7 @@ class UserFlyersController < ApplicationController
           if user_flyer
 
             # create an initial position for the Flyer located at some Post
-            flyer_path = { "post1" => postid, "post2" => postid, "storms" => 0, "stormed" => 0 }
+            flyer_path = { "post1" => postid, "post2" => postid, "storms" => 0, "stormed" => 0, "done" => true }
             flyer_path_record = user_flyer.flyer_paths.create(flyer_path)
 
             render json: user_flyer.as_json(:only => [:id])
