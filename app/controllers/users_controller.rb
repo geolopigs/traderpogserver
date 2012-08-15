@@ -180,14 +180,4 @@ class UsersController < ApplicationController
       end
     end
   end
-
-  # GET /users/1/beacons
-  def beacons
-    @beacons = Beacon.where("user_id = ? AND used = ? AND expiration > ?", params[:id], false, Time.now)
-    respond_to do |format|
-      format.json {
-        render json: @beacons.as_json(:only => [:user_id, :post_id, :expiration])
-      }
-    end
-  end
 end

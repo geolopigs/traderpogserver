@@ -1,21 +1,16 @@
 TraderPog::Application.routes.draw do
 
   resources :users do
-    member do
-      get 'beacons'
-    end
-
     collection do
       get 'facebook'
     end
 
+    resources :beacons
     resources :userconfigs
     resources :user_flyers do
       resources :flyer_paths
     end
   end
-
-  resources :beacons
 
   resources :flyer_infos do
     resources :flyer_locs

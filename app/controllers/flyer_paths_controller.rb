@@ -46,7 +46,7 @@ class FlyerPathsController < ApplicationController
     respond_to do |format|
       if (post1_enabled && post2_enabled)
         flyer_path = @userflyer.flyer_paths.create(params[:flyer_path])
-        if flyer_path
+        if flyer_path.valid?
           format.html { redirect_to @user, notice: 'Flyer path was successfully created.' }
           format.json {
             if ApplicationHelper.validate_key(request.headers["Validation-Key"])

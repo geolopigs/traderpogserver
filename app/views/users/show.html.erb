@@ -72,6 +72,22 @@
   <% end %>
 </table>
 
+<table>
+  <tr>
+    <td><h2>Beacons</h2></td>
+    <td></td>
+  </tr>
+  <% @user.beacons.each do |beacon| %>
+      <tr>
+        <td><%= beacon.user_id %></td>
+        <td><%= beacon.post_id %></td>
+        <td><%= beacon.fbid %></td>
+        <td><%= beacon.expiration %></td>
+        <td><%= link_to 'Destroy', [beacon.user, beacon], confirm: 'Are you sure?', method: :delete %></td>
+      </tr>
+  <% end %>
+</table>
+
 <h2>Add a flyer:</h2>
 <%= form_for([@user, @user.user_flyers.build]) do |f| %>
     <div class="field">
