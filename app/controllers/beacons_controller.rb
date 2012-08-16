@@ -3,10 +3,16 @@ class BeaconsController < ApplicationController
   def index
     respond_to do |format|
       format.json {
-        friends_list = User.find(user_id).select("fbid")
-        friends_array = raw_friends.split("|")
-        @beacons = Beacon.where("fbid in ? AND expiration > ?", friends_array, Time.now).limit(20)
-        render json: @beacons.as_json("user_id, fbid, post_id, expiration")
+        @user = User.find(params[:user_id])
+        friends_list = @user.fb_friends
+        friends_array = friends_list.split("|")
+        @beacons = Beacon.where("fbid in (?) AND expiration > ?", friends_array, Time.now).limit(20)
+        if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+          # this is a test response, don't send the created_at field
+          render json: @beacons.as_json(:only => [:id, :user_id, :post_id, :fbid])
+        else
+          render json: @beacons.as_json(:only => [:id, :user_id, :post_id, :fbid, :expiration])
+        end
       }
       format.html { # index.html.erb
         @beacons = Beacon.all
