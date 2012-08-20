@@ -101,23 +101,21 @@ class PostsController < ApplicationController
   def update
     @post = Post.find(params[:id])
     post_params = (params[:post]).clone
+    beacontime_error = false
 
     respond_to do |format|
       # Check if user is trying to set beacon...
-      if (post_params[:beacontime] != nil)
+      if post_params[:beacontime] != nil
         userid = @post.user_id
         live_beacons = Post.where("user_id = ? and beacontime IS NOT NULL and beacontime >= ?", userid, Time.now)
         if (live_beacons.length == 0)
           # No live beacon currently exists, go ahead and create the beacontime
           post_params.merge!(:beacontime => (Time.now + (24 * 60 * 60 * 7)))
         else
-          # create an error because we're trying to set a live beacon when one already exists
-          @errormsg = { "errormsg" => "Beacon already exist on another post" }
-          format.html { render 'posts/error', status: :forbidden }
-          format.json { render json: @errormsg, status: :forbidden }
+          beacontime_error = true
         end
       end
-      if @post.update_attributes(post_params)
+      if !beacontime_error && @post.update_attributes(post_params)
         format.html { redirect_to @post, notice: 'Post was successfully updated.' }
         format.json {
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
@@ -127,8 +125,15 @@ class PostsController < ApplicationController
           end
         }
       else
-        format.html { render action: "edit" }
-        format.json { render json: @post.errors, status: :unprocessable_entity }
+        if beacontime_error
+          # create an error because we're trying to set a live beacon when one already exists
+          @errormsg = { "errormsg" => "Beacon already exist on another post" }
+          format.html { render 'posts/error', status: :forbidden }
+          format.json { render json: @errormsg, status: :forbidden }
+        else
+          format.html { render action: "edit" }
+          format.json { render json: @post.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -161,6 +166,38 @@ class PostsController < ApplicationController
       else
         format.json { render :status => 400, :json => { :status => :error, :message => "Error!" }}
       end
+    end
+  end
+
+  # GET /posts/beacons
+  def beacons
+    respond_to do |format|
+
+      # Start by getting list of friends based on fbid
+      userid = request.headers["user-id"]
+      current_user = User.find(userid)
+      fbid_array = current_user.fb_friends.split("|")
+      friends_list = User.where("fbid in (?)", fbid_array)
+
+      # Find any friend posts that have a beacon set
+      userid_array = []
+      friend_hash = Hash.new(0)
+      friends_list.each do |friend|
+        userid_array << friend.id
+        friend_hash[friend.id] = friend.fbid
+      end
+      if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+      else
+        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel, beacontime").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+      end
+      beacon_list = []
+      @posts.as_json.each do |post|
+        beacon = post.clone
+        beacon['fbid'] = friend_hash[post['id']]
+        beacon_list << beacon
+      end
+      format.json { render json: beacon_list.as_json }
     end
   end
 
