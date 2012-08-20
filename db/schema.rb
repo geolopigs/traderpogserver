@@ -11,20 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120820040418) do
-
-  create_table "beacons", :force => true do |t|
-    t.datetime "expiration"
-    t.integer  "user_id"
-    t.integer  "post_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-    t.string   "fbid"
-  end
-
-  add_index "beacons", ["fbid"], :name => "index_beacons_on_fbid"
-  add_index "beacons", ["post_id"], :name => "index_beacons_on_post_id"
-  add_index "beacons", ["user_id"], :name => "index_beacons_on_user_id"
+ActiveRecord::Schema.define(:version => 20120820224638) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"

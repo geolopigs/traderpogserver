@@ -7,6 +7,5 @@ class Post < ActiveRecord::Base
   validates :supplyratelevel, :presence => true
 
   belongs_to :user
-  has_many :beacons, :dependent => :destroy
   belongs_to :item_info
 end
