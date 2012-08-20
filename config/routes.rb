@@ -5,7 +5,6 @@ TraderPog::Application.routes.draw do
       get 'facebook'
     end
 
-    resources :beacons
     resources :userconfigs
     resources :user_flyers do
       resources :flyer_paths
@@ -19,6 +18,10 @@ TraderPog::Application.routes.draw do
   resources :posts do
     collection do
       get 'scan'
+    end
+
+    collection do
+      get 'beacons'
     end
 
     resources :post_items

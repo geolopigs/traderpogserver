@@ -14,7 +14,7 @@ class PostsController < ApplicationController
        user_id = request.headers["User-Id"]
        if user_id
           @posts = Post.where("user_id = ?", user_id)
-          render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supplymaxlevel, :supplyratelevel])
+          render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supplymaxlevel, :supplyratelevel, :beacontime])
         else
           @errormsg = { "errormsg" => "Missing user" }
           render json: @errormsg, status: :unprocessable_entity
@@ -34,7 +34,7 @@ class PostsController < ApplicationController
         @post = Post.find(params[:id])
       }
       format.json {
-        @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel")
+        @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel, beacontime")
         @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
         @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
         render json: @post.as_json.merge(@item_info.as_json(:except => [:id]).merge(@item_loc.first.as_json))
@@ -83,7 +83,7 @@ class PostsController < ApplicationController
 
           @post = Post.new(post_params)
           if @post.save
-            render json: @post.as_json(:only => [:id, :img, :supplymaxlevel, :supplyratelevel])
+            render json: @post.as_json(:only => [:id, :img, :supplymaxlevel, :supplyratelevel, :beacontime])
           else
             render json: @post.errors, status: :unprocessable_entity
           end
@@ -100,11 +100,32 @@ class PostsController < ApplicationController
   # PUT /posts/1.json
   def update
     @post = Post.find(params[:id])
+    post_params = (params[:post]).clone
 
     respond_to do |format|
-      if @post.update_attributes(params[:post])
+      # Check if user is trying to set beacon...
+      if (post_params[:beacontime] != nil)
+        userid = @post.user_id
+        live_beacons = Post.where("user_id = ? and beacontime IS NOT NULL and beacontime >= ?", userid, Time.now)
+        if (live_beacons.length == 0)
+          # No live beacon currently exists, go ahead and create the beacontime
+          post_params.merge!(:beacontime => (Time.now + (24 * 60 * 60 * 7)))
+        else
+          # create an error because we're trying to set a live beacon when one already exists
+          @errormsg = { "errormsg" => "Beacon already exist on another post" }
+          format.html { render 'posts/error', status: :forbidden }
+          format.json { render json: @errormsg, status: :forbidden }
+        end
+      end
+      if @post.update_attributes(post_params)
         format.html { redirect_to @post, notice: 'Post was successfully updated.' }
-        format.json { head :no_content }
+        format.json {
+          if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+            render json: @post.as_json(:only => [:id, :supplymaxlevel, :supplyratelevel])
+          else
+            render json: @post.as_json(:only => [:id, :supplymaxlevel, :supplyratelevel, :beacontime])
+          end
+        }
       else
         format.html { render action: "edit" }
         format.json { render json: @post.errors, status: :unprocessable_entity }

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120815161520) do
+ActiveRecord::Schema.define(:version => 20120820040418) do
 
   create_table "beacons", :force => true do |t|
     t.datetime "expiration"
@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20120815161520) do
     t.integer  "supplymaxlevel"
     t.integer  "supplyratelevel"
     t.boolean  "disabled"
+    t.datetime "beacontime"
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
