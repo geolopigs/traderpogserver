@@ -3,15 +3,13 @@ class PostsController < ApplicationController
   # GET /posts
   # GET /posts.json
   def index
-
-    # no JSON API for this. We can only access all posts through the webpage.
     respond_to do |format|
       format.html { # index.html.erb
         @posts = Post.all
       }
       format.json {
       @language = ApplicationHelper.preferred_language(request.headers["Accept-Language"])
-       user_id = request.headers["User-Id"]
+       user_id = request.headers["user-id"]
        if user_id
           @posts = Post.where("user_id = ?", user_id)
           render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supplymaxlevel, :supplyratelevel, :beacontime])
