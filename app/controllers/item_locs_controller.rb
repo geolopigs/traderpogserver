@@ -36,6 +36,7 @@ class ItemLocsController < ApplicationController
         @item_info = ItemInfo.find(params[:item_info_id])
         format.html {
           if @item_info.item_locs.create(params[:item_loc])
+            GameInfoHelper.updateTime
             redirect_to @item_info, notice: 'Localized item information was successfully created.'
           else
             render action: "new"
@@ -45,6 +46,7 @@ class ItemLocsController < ApplicationController
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
             @item_loc = @item_info.item_locs.create(params[:item_loc])
             if @item_loc.valid?
+              GameInfoHelper.updateTime
               render json: @item_loc.as_json(:only => [:id])
             else
               render json: @item_loc.errors, status: :unprocessable_entity

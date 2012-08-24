@@ -36,6 +36,7 @@ class FlyerLocsController < ApplicationController
         @flyer_info = FlyerInfo.find(params[:flyer_info_id])
         format.html {
           if @flyer_info.flyer_locs.create(params[:flyer_loc])
+            GameInfoHelper.updateTime
             redirect_to @flyer_info, notice: 'Localized flyer information was successfully created.'
           else
             render action: "new"
@@ -45,6 +46,7 @@ class FlyerLocsController < ApplicationController
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
             @flyer_loc = @flyer_info.flyer_locs.create(params[:flyer_loc])
             if @flyer_loc.valid?
+              GameInfoHelper.updateTime
               render json: @flyer_loc.as_json(:only => [:id])
             else
               render json: @flyer_loc.errors, status: :unprocessable_entity
