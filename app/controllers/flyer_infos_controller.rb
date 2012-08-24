@@ -62,6 +62,7 @@ class FlyerInfosController < ApplicationController
       format.html {
         @flyer_info = FlyerInfo.new(params[:flyer_info])
         if @flyer_info.save
+          GameInfoHelper.updateTime
           redirect_to @flyer_info, notice: 'Flyer info was successfully created.'
         else
           render action: "new"
@@ -71,6 +72,7 @@ class FlyerInfosController < ApplicationController
         if ApplicationHelper.validate_key(request.headers["Validation-Key"])
           @flyer_info = FlyerInfo.new(params[:flyer_info])
           if @flyer_info.save
+            GameInfoHelper.updateTime
             render json: @flyer_info.as_json(:only => [:id])
           else
             render json: @flyer_info.errors, status: :unprocessable_entity
@@ -91,6 +93,7 @@ class FlyerInfosController < ApplicationController
       format.html {
         @flyer_info = FlyerInfo.find(params[:id])
         if @flyer_info.update_attributes(params[:flyer_info])
+          GameInfoHelper.updateTime
           redirect_to @flyer_info, notice: 'Flyer info was successfully updated.'
         else
           render action: "edit"
@@ -107,6 +110,7 @@ class FlyerInfosController < ApplicationController
       format.html {
         @flyer_info = FlyerInfo.find(params[:id])
         @flyer_info.destroy
+        GameInfoHelper.updateTime
         redirect_to flyer_infos_url
       }
     end

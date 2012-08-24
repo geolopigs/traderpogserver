@@ -60,6 +60,7 @@ class ItemInfosController < ApplicationController
       format.html {
         @item_info = ItemInfo.new(params[:item_info])
         if @item_info.save
+          GameInfoHelper.updateTime
           redirect_to @item_info, notice: 'Item info was successfully created.'
         else
           render action: "new"
@@ -69,6 +70,7 @@ class ItemInfosController < ApplicationController
         if ApplicationHelper.validate_key(request.headers["Validation-Key"])
           @item_info = ItemInfo.new(params[:item_info])
           if @item_info.save
+            GameInfoHelper.updateTime
             render json: @item_info.as_json(:only => [:id])
           else
             render json: @item_info.errors, status: :unprocessable_entity
@@ -89,6 +91,7 @@ class ItemInfosController < ApplicationController
       format.html {
         @item_info = ItemInfo.find(params[:id])
         if @item_info.update_attributes(params[:item_info])
+          GameInfoHelper.updateTime
           redirect_to @item_info, notice: 'Item info was successfully updated.'
         else
           render action: "edit"
@@ -105,6 +108,7 @@ class ItemInfosController < ApplicationController
       format.html {
         @item_info = ItemInfo.find(params[:id])
         @item_info.destroy
+        GameInfoHelper.updateTime
         redirect_to item_infos_url
       }
     end

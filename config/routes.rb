@@ -35,6 +35,8 @@ TraderPog::Application.routes.draw do
     resources :item_locs
   end
 
+  match 'gameinfo' => 'GameInfo#show', :via => [:get]
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
