@@ -74,8 +74,8 @@ class UsersController < ApplicationController
       user_params.merge!(:secretkey => SecureRandom.uuid)
     end
 
-    # initialize bucks to be 0 and member to be false
-    user_params.merge!(:bucks => 0, :member => false)
+    # initialize bucks to be 200 and member to be false
+    user_params.merge!(:bucks => 200, :member => false)
 
     # handle fb friends case
     friends = user_params.delete(:fb_friends)
