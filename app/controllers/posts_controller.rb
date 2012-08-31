@@ -12,7 +12,7 @@ class PostsController < ApplicationController
        user_id = request.headers["user-id"]
        if user_id
           @posts = Post.where("user_id = ?", user_id)
-          render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supplymaxlevel, :supplyratelevel, :beacontime])
+          render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
         else
           @errormsg = { "errormsg" => "Missing user" }
           render json: @errormsg, status: :unprocessable_entity
@@ -32,10 +32,8 @@ class PostsController < ApplicationController
         @post = Post.find(params[:id])
       }
       format.json {
-        @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel, beacontime")
-        @item_info = @post.item_info(:select => "id, price, supplymax, supplyrate, multiplier")
-        @item_loc = ItemInfosHelper.getitemloc(@item_info, @language)
-        render json: @post.as_json.merge(@item_info.as_json(:except => [:id]).merge(@item_loc.first.as_json))
+        @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime")
+        render json: @post.as_json
       }
     end
   end
@@ -76,12 +74,12 @@ class PostsController < ApplicationController
           # Make a copy of the post params
           post_params = (params[:post]).clone
 
-          # initialize bucks to be 0 and member to be false
-          post_params.merge!(:name => "", :img => "default", :region => 0, :supplymaxlevel => 1, :supplyratelevel => 1, :disabled => false)
+          # initialize standard values for new posts
+          post_params.merge!(:name => "", :img => "default", :region => 0, :supply => @item_info.supplymax, :supplymaxlevel => 1, :supplyratelevel => 1, :disabled => false)
 
           @post = Post.new(post_params)
           if @post.save
-            render json: @post.as_json(:only => [:id, :img, :supplymaxlevel, :supplyratelevel, :beacontime])
+            render json: @post.as_json(:only => [:id, :img, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
           else
             render json: @post.errors, status: :unprocessable_entity
           end
@@ -100,6 +98,7 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     post_params = (params[:post]).clone
     beacontime_error = false
+    supply_error = false;
 
     respond_to do |format|
       # Check if user is trying to set beacon...
@@ -113,13 +112,29 @@ class PostsController < ApplicationController
           beacontime_error = true
         end
       end
-      if !beacontime_error && @post.update_attributes(post_params)
+      # Check if user is trying to set supply
+      if post_params[:supply] != nil
+        current_supply = @post.supply
+        if (post_params[:supply] <= 0)
+          new_supply = current_supply + post_params[:supply]
+          post_params.merge!(:supply => [new_supply, 0].max)
+          # updates that reduce the supply value of a post must stand alone
+          if (post_params.size > 1)
+            supply_error = true
+          end
+        else
+          @item_info = @post.item_info
+          new_supply = [(@post.supplymaxlevel - 1) * @item_info.multiplier, 1].max * @item_info.supplymax
+          post_params.merge!(:supply => new_supply)
+        end
+      end
+      if !supply_error && !beacontime_error && @post.update_attributes(post_params)
         format.html { redirect_to @post, notice: 'Post was successfully updated.' }
         format.json {
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-            render json: @post.as_json(:only => [:id, :supplymaxlevel, :supplyratelevel])
+            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
           else
-            render json: @post.as_json(:only => [:id, :supplymaxlevel, :supplyratelevel, :beacontime])
+            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
           end
         }
       else
@@ -185,9 +200,9 @@ class PostsController < ApplicationController
         friend_hash[friend.id] = friend.fbid
       end
       if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
       else
-        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supplymaxlevel, supplyratelevel, beacontime").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
       end
       beacon_list = []
       @posts.as_json.each do |post|

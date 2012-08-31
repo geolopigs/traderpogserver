@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120823230440) do
+ActiveRecord::Schema.define(:version => 20120830222815) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -109,6 +109,7 @@ ActiveRecord::Schema.define(:version => 20120823230440) do
     t.integer  "supplyratelevel"
     t.boolean  "disabled"
     t.datetime "beacontime"
+    t.integer  "supply"
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
