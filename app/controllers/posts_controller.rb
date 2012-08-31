@@ -115,8 +115,9 @@ class PostsController < ApplicationController
       # Check if user is trying to set supply
       if post_params[:supply] != nil
         current_supply = @post.supply
-        if (post_params[:supply] <= 0)
-          new_supply = current_supply + post_params[:supply]
+        change_value = Integer(post_params[:supply])
+        if (change_value <= 0)
+          new_supply = current_supply + change_value
           post_params.merge!(:supply => [new_supply, 0].max)
           # updates that reduce the supply value of a post must stand alone
           if (post_params.size > 1)
