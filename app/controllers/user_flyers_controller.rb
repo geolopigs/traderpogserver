@@ -78,13 +78,43 @@ class UserFlyersController < ApplicationController
     @userflyer = @user.user_flyers.find(params[:id])
 
     respond_to do |format|
-      if @userflyer.update_attributes(params[:user_flyer])
-        format.html { redirect_to @user, notice: 'User flyer was successfully updated.' }
-        format.json { render json: @userflyer.as_json(:only => [:id]) }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @userflyer.errors, status: :unprocessable_entity }
-      end
+      format.html {
+        if @userflyer.update_attributes(params[:user_flyer])
+          redirect_to @user, notice: 'User flyer was successfully updated.'
+        else
+          render action: "edit"
+        end
+        }
+      format.json {
+        @flyerpath = @userflyer.flyer_paths.order("created_at DESC").first
+        user_flyer_params = params[:user_flyer].clone
+
+        user_flyer_msg = "User flyer params:" + user_flyer_params.to_s
+        puts user_flyer_msg
+
+        flyer_path_params = params[:flyer_path].clone
+
+        flyer_path_msg = "Flyer path params:" + flyer_path_params.to_s
+        puts flyer_path_msg
+
+        success = true
+        if user_flyer_params.length > 0
+          if !(@userflyer.update_attributes(user_flyer_params))
+            success = false
+          end
+        end
+        if success && flyer_path_params && flyer_path_params.length > 0
+          if !(@flyerpath.update_attributes(flyer_path_params))
+            success = false
+          end
+        end
+
+        if success
+          render json: @userflyer.as_json(:only => [:id])
+        else
+          render json: @userflyer.errors, status: :unprocessable_entity
+        end
+        }
     end
   end
 
