@@ -9,9 +9,9 @@ class FlyerPathsController < ApplicationController
 
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
       # this is a test response, don't send the created_at field
-      path = @userflyer.flyer_paths.select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
+      path = @userflyer.flyer_paths.select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, item_info_id, num_items, price, done")
     else
-      path = @userflyer.flyer_paths.select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
+      path = @userflyer.flyer_paths.select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, item_info_id, num_items, price, done")
     end
 
     respond_to do |format|
@@ -26,9 +26,9 @@ class FlyerPathsController < ApplicationController
 
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
       # this is a test response, don't send the created_at field
-      path = @userflyer.flyer_paths(params[:id]).select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
+      path = @userflyer.flyer_paths(params[:id]).select("id, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, item_info_id, num_items, price, done")
     else
-      path = @userflyer.flyer_paths(params[:id]).select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, done")
+      path = @userflyer.flyer_paths(params[:id]).select("id, created_at, post1, post2, longitude1, longitude2, latitude1, latitude2, storms, stormed, item_info_id, num_items, price, done")
     end
 
     respond_to do |format|
