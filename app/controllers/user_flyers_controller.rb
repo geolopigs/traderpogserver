@@ -12,7 +12,7 @@ class UserFlyersController < ApplicationController
           else
             path = UserFlyersHelper.getflyerpaths(userflyer, 1, false)
           end
-          userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis]).merge(path)
+          userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled]).merge(path)
         }
         render json: @complete_userflyers
       }
@@ -31,7 +31,7 @@ class UserFlyersController < ApplicationController
         else
           path = UserFlyersHelper.getflyerpaths(@userflyer, 1, false)
         end
-        render json: @userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis]).merge(path)
+        render json: @userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled]).merge(path)
       }
     end
   end
@@ -41,7 +41,7 @@ class UserFlyersController < ApplicationController
 
     # add default parameter values
     user_flyer_params = (params[:user_flyer]).clone
-    user_flyer_params.merge!(:item_info_id => nil, :num_items => 0, :cost_basis => 0.0)
+    user_flyer_params.merge!(:item_info_id => nil, :num_items => 0, :cost_basis => 0.0, :meterstraveled => 0.0)
 
     respond_to do |format|
       format.html {
