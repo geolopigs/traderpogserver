@@ -176,14 +176,23 @@ class PostsController < ApplicationController
   # GET /posts/scan
   def scan
     respond_to do |format|
-
+      userid = request.headers["user-id"]
       current_longitude = request.headers["traderpog-longitude"]
       current_latitude = request.headers["traderpog-latitude"]
-      if (current_longitude != nil) && (current_latitude != nil)
-        @posts = Post.all
-        #@post = Post.where("longitude = ?", "#{current_longitude}")
-        # compute region
-        # lookup based on region
+      fraction = 0.02
+      if (current_longitude != nil) && (current_latitude != nil) && (userid != nil)
+        current_longitude = current_longitude.to_f
+        current_latitude = current_latitude.to_f
+
+        # get the region for the current point
+        region = PostsHelper.coordtoregion(current_latitude, current_longitude, fraction)
+        # get the surrounding regions
+        regions_array = PostsHelper.getsurroundingregions(region, fraction)
+        # add the current region to the list of regions
+        regions_array << region
+
+        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, disabled").where("region in (?) AND user_id <> ?", regions_array, userid).limit(100)
+
         format.json { render json: @posts.as_json }
       else
         format.json { render :status => 400, :json => { :status => :error, :message => "Error!" }}
