@@ -74,8 +74,16 @@ class PostsController < ApplicationController
           # Make a copy of the post params
           post_params = (params[:post]).clone
 
+          # impose max and min on the latitude, longitude values
+          latitude = [[post_params[:latitude].to_f, 90].min, -90].max
+          longitude = [[post_params[:longitude].to_f, 180].min, -180].max
+          post_params.merge!(:latitude => latitude, :longitude => longitude)
+
+          # calculate the region value
+          region = PostsHelper.coordtoregion(post_params[:latitude], post_params[:longitude], 0.02)
+
           # initialize standard values for new posts
-          post_params.merge!(:name => "", :img => "default", :region => 0, :supply => @item_info.supplymax, :supplymaxlevel => 1, :supplyratelevel => 1, :disabled => false)
+          post_params.merge!(:name => "", :img => "default", :region => region, :supply => @item_info.supplymax, :supplymaxlevel => 1, :supplyratelevel => 1, :disabled => false)
 
           @post = Post.new(post_params)
           if @post.save
