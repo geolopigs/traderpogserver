@@ -109,54 +109,58 @@ class PostsController < ApplicationController
     supply_error = false;
 
     respond_to do |format|
-      # Check if user is trying to set beacon...
-      if post_params[:beacontime] != nil
-        userid = @post.user_id
-        live_beacons = Post.where("user_id = ? and beacontime IS NOT NULL and beacontime >= ?", userid, Time.now)
-        if (live_beacons.length == 0)
-          # No live beacon currently exists, go ahead and create the beacontime
-          post_params.merge!(:beacontime => (Time.now + (24 * 60 * 60 * 7)))
-        else
-          beacontime_error = true
-        end
-      end
-      # Check if user is trying to set supply
-      if post_params[:supply] != nil
-        current_supply = @post.supply
-        change_value = Integer(post_params[:supply])
-        if (change_value <= 0)
-          new_supply = current_supply + change_value
-          post_params.merge!(:supply => [new_supply, 0].max)
-          # updates that reduce the supply value of a post must stand alone
-          if (post_params.size > 1)
-            supply_error = true
-          end
-        else
-          @item_info = @post.item_info
-          new_supply = [(@post.supplymaxlevel - 1) * @item_info.multiplier, 1].max * @item_info.supplymax
-          post_params.merge!(:supply => new_supply)
-        end
-      end
-      if !supply_error && !beacontime_error && @post.update_attributes(post_params)
-        format.html { redirect_to @post, notice: 'Post was successfully updated.' }
-        format.json {
-          if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
-          else
-            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
-          end
-        }
-      else
-        if beacontime_error
-          # create an error because we're trying to set a live beacon when one already exists
-          @errormsg = { "errormsg" => "Beacon already exist on another post" }
-          format.html { render 'posts/error', status: :forbidden }
-          format.json { render json: @errormsg, status: :forbidden }
+      format.html {
+        if @post.update_attributes(post_params)
+          redirect_to @post, notice: 'Post was successfully updated.'
         else
           format.html { render action: "edit" }
-          format.json { render json: @post.errors, status: :unprocessable_entity }
         end
-      end
+      }
+      format.json {
+        # Check if user is trying to set beacon...
+        if post_params[:beacontime] != nil
+          userid = @post.user_id
+          live_beacons = Post.where("user_id = ? and beacontime IS NOT NULL and beacontime >= ?", userid, Time.now)
+          if (live_beacons.length == 0)
+            # No live beacon currently exists, go ahead and create the beacontime
+            post_params.merge!(:beacontime => (Time.now + (24 * 60 * 60 * 7)))
+          else
+            beacontime_error = true
+          end
+        end
+        # Check if user is trying to set supply
+        if post_params[:supply] != nil
+          current_supply = @post.supply
+          change_value = Integer(post_params[:supply])
+          if (change_value <= 0)
+            new_supply = current_supply + change_value
+            post_params.merge!(:supply => [new_supply, 0].max)
+            # updates that reduce the supply value of a post must stand alone
+            if (post_params.size > 1)
+              supply_error = true
+            end
+          else
+            @item_info = @post.item_info
+            new_supply = [(@post.supplymaxlevel - 1) * @item_info.multiplier, 1].max * @item_info.supplymax
+            post_params.merge!(:supply => new_supply)
+          end
+        end
+        if !supply_error && !beacontime_error && @post.update_attributes(post_params)
+            if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+              render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
+            else
+              render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
+            end
+        else
+          if beacontime_error
+            # create an error because we're trying to set a live beacon when one already exists
+            @errormsg = { "errormsg" => "Beacon already exist on another post" }
+            render json: @errormsg, status: :forbidden
+          else
+            render json: @post.errors, status: :unprocessable_entity
+          end
+        end
+      }
     end
   end
 
