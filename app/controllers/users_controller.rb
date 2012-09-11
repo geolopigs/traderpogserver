@@ -124,22 +124,37 @@ class UsersController < ApplicationController
           # Make a copy of the user params
           user_params = (params[:user]).clone
 
-          # remove fields that are not settable by calling api
-          user_params.delete(:secretkey)
-          user_params.delete(:member)
-
-          # handle fb friends case
-          friends = user_params.delete(:fb_friends)
-          if friends
-            available_friends = fb_friends_helper(friends)
-            user_params.merge!(:fb_friends => available_friends)
+          # validate fbid being set
+          fbid_valid = true
+          fbid = user_params[:fbid]
+          if fbid
+            @user_by_fbid = User.where("fbid = ?", fbid).first
+            if @user_by_fbid && (@user_by_fbid.id != @user.id)
+              fbid_valid = false
+            end
           end
 
-          if @user.update_attributes(user_params)
-            render json: @user.as_json(:only => [:id])
+          if fbid_valid
+            # remove fields that are not settable by calling api
+            user_params.delete(:secretkey)
+            user_params.delete(:member)
+
+            # handle fb friends case
+            friends = user_params.delete(:fb_friends)
+            if friends
+              available_friends = fb_friends_helper(friends)
+              user_params.merge!(:fb_friends => available_friends)
+            end
+
+            if @user.update_attributes(user_params)
+              render json: @user.as_json(:only => [:id])
+            else
+              # Some error happened while trying to update the user
+              render json: @user.errors, status: :unprocessable_entity
+            end
           else
-            # Some error happened while trying to update the user
-            render json: @user.errors, status: :unprocessable_entity
+            # User does not exist.
+            render :status => :unprocessable_entity, :json => { :status => :error, :message => "FacebookID already associated with different user" }
           end
         rescue
           # User does not exist.
