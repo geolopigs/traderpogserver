@@ -211,27 +211,31 @@ class PostsController < ApplicationController
       # Start by getting list of friends based on fbid
       userid = request.headers["user-id"]
       current_user = User.find(userid)
-      fbid_array = current_user.fb_friends.split("|")
-      friends_list = User.where("fbid in (?)", fbid_array)
-
-      # Find any friend posts that have a beacon set
-      userid_array = []
-      friend_hash = Hash.new(0)
-      friends_list.each do |friend|
-        userid_array << friend.id
-        friend_hash[friend.id] = friend.fbid
-      end
-      if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
-      else
-        @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
-      end
       beacon_list = []
-      @posts.as_json.each do |post|
-        beacon = post.clone
-        beacon['fbid'] = friend_hash[post['id']]
-        beacon_list << beacon
+      friend_hash = Hash.new(0)
+      fbid_array = current_user.fb_friends
+      if fbid_array
+        fbid_array = fbid_array.split("|")
+        friends_list = User.where("fbid in (?)", fbid_array)
+
+        # Find any friend posts that have a beacon set
+        userid_array = []
+        friends_list.each do |friend|
+          userid_array << friend.id
+          friend_hash[friend.id] = friend.fbid
+        end
+        if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+          @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+        else
+          @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime").where("user_id in (?) AND beacontime > ?", userid_array, Time.now).limit(20)
+        end
+        @posts.as_json.each do |post|
+          beacon = post.clone
+          beacon['fbid'] = friend_hash[post['id']]
+          beacon_list << beacon
+        end
       end
+
       format.json { render json: beacon_list.as_json }
     end
   end
