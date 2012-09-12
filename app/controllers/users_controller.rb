@@ -2,17 +2,31 @@ require 'securerandom'
 
 class UsersController < ApplicationController
 
-  def fb_friends_helper(raw_friends)
+  def insert_new_friend(user, new_fbid)
+    friends_list = user[:fb_friends]
+    if !friends_list
+      friends_list = ""
+    end
+    if !friends_list.empty?
+      friends_list << "|"
+    end
+    friends_list << new_fbid
+    update_hash = { :fb_friends => friends_list }
+    user.update_attributes(update_hash)
+  end
+
+  def fb_friends_helper(current_fbid, raw_friends)
     # Takes a list of pipe delimited friend IDs and only returns the ones that
     # are in the user database
     friends_array = raw_friends.split("|")
-    trimmed_list = User.where(:fbid => friends_array).select("fbid")
+    trimmed_list = User.where(:fbid => friends_array)
     available_friends = ""
     trimmed_list.each do |friend|
       if !(available_friends.empty?)
         available_friends << "|"
       end
       available_friends << friend[:fbid]
+      insert_new_friend(friend, current_fbid)
     end
     available_friends
   end
@@ -80,7 +94,8 @@ class UsersController < ApplicationController
     # handle fb friends case
     friends = user_params.delete(:fb_friends)
     if friends
-      available_friends = fb_friends_helper(friends)
+      fbid = user_params[:fbid]
+      available_friends = fb_friends_helper(fbid, friends)
       user_params.merge!(:fb_friends => available_friends)
     end
 
@@ -142,7 +157,8 @@ class UsersController < ApplicationController
             # handle fb friends case
             friends = user_params.delete(:fb_friends)
             if friends
-              available_friends = fb_friends_helper(friends)
+              fbid = user_params[:fbid]
+              available_friends = fb_friends_helper(fbid, friends)
               user_params.merge!(:fb_friends => available_friends)
             end
 
