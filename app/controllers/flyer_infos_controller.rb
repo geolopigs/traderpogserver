@@ -1,4 +1,8 @@
+require 'logging'
+
 class FlyerInfosController < ApplicationController
+
+  include Logging
 
   # @param [Object] index
   def getflyer(index)
@@ -78,8 +82,7 @@ class FlyerInfosController < ApplicationController
             render json: @flyer_info.errors, status: :unprocessable_entity
           end
         else
-          @errormsg = { "errormsg" => "Data incorrect" }
-          render json: @errormsg, status: :forbidden
+          create_error(:forbidden, :post, params[:flyer_info], "Data incorrect")
         end
       }
     end
@@ -99,6 +102,9 @@ class FlyerInfosController < ApplicationController
           render action: "edit"
         end
       }
+      format.json {
+        create_error(:forbidden, :put, params[:flyer_info], "Data incorrect")
+      }
     end
   end
 
@@ -112,6 +118,9 @@ class FlyerInfosController < ApplicationController
         @flyer_info.destroy
         GameInfoHelper.updateTime
         redirect_to flyer_infos_url
+      }
+      format.json {
+        create_error(:forbidden, :delete, params[:flyer_info], "Data incorrect")
       }
     end
   end

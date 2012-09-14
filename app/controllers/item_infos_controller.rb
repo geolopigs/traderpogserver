@@ -1,4 +1,8 @@
+require 'logging'
+
 class ItemInfosController < ApplicationController
+
+  include Logging
 
   # @param [Object] index
   def getitem(index)
@@ -73,11 +77,10 @@ class ItemInfosController < ApplicationController
             GameInfoHelper.updateTime
             render json: @item_info.as_json(:only => [:id])
           else
-            render json: @item_info.errors, status: :unprocessable_entity
+            create_error(:unprocessable_entity, :post, params[:item_info], @item_info.errors)
           end
         else
-          @errormsg = { "errormsg" => "Data incorrect" }
-          render json: @errormsg, status: :forbidden
+          create_error(:forbidden, :post, params[:item_info], "Data incorrect")
         end
       }
     end
@@ -97,6 +100,9 @@ class ItemInfosController < ApplicationController
           render action: "edit"
         end
       }
+      format.json {
+        create_error(:forbidden, :put, params[:item_info], "Data incorrect")
+      }
     end
   end
 
@@ -110,6 +116,9 @@ class ItemInfosController < ApplicationController
         @item_info.destroy
         GameInfoHelper.updateTime
         redirect_to item_infos_url
+      }
+      format.json {
+        create_error(:forbidden, :put, params[:item_info], "Data incorrect")
       }
     end
   end

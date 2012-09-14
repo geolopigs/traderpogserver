@@ -1,4 +1,9 @@
+require 'logging'
+
 class FlyerPathsController < ApplicationController
+
+  include Logging
+
   def index
     @user = User.find(params[:user_id])
     @userflyer = @user.user_flyers.find(params[:user_flyer_id])
@@ -58,12 +63,16 @@ class FlyerPathsController < ApplicationController
           }
         else
           format.html { render action: "new" }
-          format.json { render json: flyer_path.errors, status: :unprocessable_entity }
+          format.json {
+            create_error(:unprocessable_entity, :post, params[:flyer_path], flyer_path.errors)
+          }
         end
       else
         @errormsg = { "errormsg" => "Post not found" }
         format.html { render 'posts/error', status: :not_found }
-        format.json { render json: @errormsg, status: :not_found }
+        format.json {
+          create_error(:unprocessable_entity, :post, params[:flyer_path], "Legitimate post or coordinates missing from flyer path")
+        }
       end
     end
   end
@@ -78,19 +87,24 @@ class FlyerPathsController < ApplicationController
         format.json { render json: @flyer_path.as_json(:only => [:id]) }
       else
         format.html { render action: "edit" }
-        format.json { render json: @flyer_path.errors, status: :unprocessable_entity }
+        format.json {
+          create_error(:unprocessable_entity, :put, params[:flyer_path], @flyer_path.errors)
+        }
       end
     end
   end
 
   def destroy
-    @user = User.find(params[:user_id])
-    @flyer_path = FlyerPath.find(params[:id])
-    @flyer_path.destroy
-
     respond_to do |format|
-      format.html { redirect_to @user }
-      format.json { head :no_content }
+      format.html {
+        @user = User.find(params[:user_id])
+        @flyer_path = FlyerPath.find(params[:id])
+        @flyer_path.destroy
+        redirect_to @user
+      }
+      format.json {
+        create_error(:forbidden, :destroy, params[:flyer_path], "Data incorrect")
+      }
     end
   end
 end

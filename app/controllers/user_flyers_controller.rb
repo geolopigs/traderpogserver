@@ -1,4 +1,9 @@
+require 'logging'
+
 class UserFlyersController < ApplicationController
+
+  include Logging
+
   def index
     @user = User.find(params[:user_id])
     @userflyers = @user.user_flyers
@@ -63,11 +68,10 @@ class UserFlyersController < ApplicationController
 
             render json: user_flyer.as_json(:only => [:id])
           else
-            render json: user_flyer.errors, status: :unprocessable_entity
+            create_error(:unprocessable_entity, :post, user_flyer_params, user_flyer.errors)
           end
         else
-          @errormsg = { "errormsg" => "Missing Post ID" }
-          render json: @errormsg, status: :unprocessable_entity
+          create_error(:unprocessable_entity, :post, user_flyer_params, "Missing Post ID")
         end
       }
     end
@@ -89,13 +93,7 @@ class UserFlyersController < ApplicationController
         @flyerpath = @userflyer.flyer_paths.order("created_at DESC").first
         user_flyer_params = params[:user_flyer].clone
 
-        user_flyer_msg = "User flyer params:" + user_flyer_params.to_s
-        puts user_flyer_msg
-
         flyer_path_params = params[:flyer_path].clone
-
-        flyer_path_msg = "Flyer path params:" + flyer_path_params.to_s
-        puts flyer_path_msg
 
         success = true
         if user_flyer_params.length > 0
@@ -112,20 +110,24 @@ class UserFlyersController < ApplicationController
         if success
           render json: @userflyer.as_json(:only => [:id])
         else
-          render json: @userflyer.errors, status: :unprocessable_entity
+          create_error(:unprocessable_entity, :put, user_flyer_params + flyer_path_params, @user_flyer.errors)
         end
         }
     end
   end
 
   def destroy
-    @user = User.find(params[:user_id])
-    @userflyer = @user.user_flyers.find(params[:id])
-    @userflyer.destroy
 
     respond_to do |format|
-      format.html { redirect_to @user }
-      format.json { head :no_content }
+      format.html {
+        @user = User.find(params[:user_id])
+        @userflyer = @user.user_flyers.find(params[:id])
+        @userflyer.destroy
+        redirect_to @user
+      }
+      format.json {
+        create_error(:unprocessable_entity, :delete, params[:user_flyer], "Data incorrect")
+      }
     end
   end
 end

@@ -1,6 +1,9 @@
 require 'securerandom'
+require 'logging'
 
 class UsersController < ApplicationController
+
+  include Logging
 
   def insert_new_friend(user, new_fbid)
     friends_list = user[:fb_friends]
@@ -55,7 +58,7 @@ class UsersController < ApplicationController
         }
       rescue
         format.html { redirect_to users_url }
-        format.json { head :no_content }
+        format.json { create_error(:unprocessable_entity, :get, params[:user], "User does not exist") }
       end
     end
   end
@@ -66,7 +69,6 @@ class UsersController < ApplicationController
       format.html { # new.html.erb
         @user = User.new
       }
-      # JSON should use the PUTS API to create a new user
     end
   end
 
@@ -112,8 +114,7 @@ class UsersController < ApplicationController
       else
         format.html { render action: "new" }
         format.json {
-          puts @user.errors
-          render json: @user.errors, status: :unprocessable_entity
+          create_error(:unprocessable_entity, :post, user_params, @user.errors)
         }
       end
     end
@@ -166,15 +167,14 @@ class UsersController < ApplicationController
               render json: @user.as_json(:only => [:id])
             else
               # Some error happened while trying to update the user
-              render json: @user.errors, status: :unprocessable_entity
+              create_error(:unprocessable_entity, :put, user_params, @user.errors)
             end
           else
-            # User does not exist.
-            render :status => :unprocessable_entity, :json => { :status => :error, :message => "FacebookID already associated with different user" }
+            create_error(:unprocessable_entity, :put, user_params, "FacebookID already associated with different user")
           end
         rescue
           # User does not exist.
-          render json: "User error", status: :unprocessable_entity
+          create_error(:unprocessable_entity, :put, params[:user], "User does not exist")
         end
       }
     end
@@ -203,11 +203,13 @@ class UsersController < ApplicationController
           if @user
             render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])
           else
-            render :status => 404, :json => { :status => :error, :message => "Not found!" }
+            create_error(:not_found, :get, facebookid, "Could not find matching user for facebookid")
           end
         }
       else
-        format.json { render :status => 404, :json => { :status => :error, :message => "Not found!" } }
+        format.json {
+          create_error(:not_found, :get, facebookid, "Missing facebookid")
+        }
       end
     end
   end

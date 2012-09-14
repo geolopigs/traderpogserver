@@ -1,4 +1,8 @@
+require 'logging'
+
 class ItemLocsController < ApplicationController
+
+  include Logging
 
   def index
     respond_to do |format|
@@ -10,7 +14,9 @@ class ItemLocsController < ApplicationController
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:unprocessable_entity, :get, params[:item_loc], "Item info not found")
+        }
       end
     end
   end
@@ -25,7 +31,9 @@ class ItemLocsController < ApplicationController
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:unprocessable_entity, :get, params[:item_loc], "Item info not found")
+        }
       end
     end
   end
@@ -52,14 +60,15 @@ class ItemLocsController < ApplicationController
               render json: @item_loc.errors, status: :unprocessable_entity
             end
           else
-            @errormsg = { "errormsg" => "Data incorrect" }
-            render json: @errormsg, status: :forbidden
+            create_error(:forbidden, :post, params[:item_loc], "Data incorrect")
           end
         }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:unprocessable_entity, :get, params[:item_loc], "Item info not found")
+        }
       end
     end
   end

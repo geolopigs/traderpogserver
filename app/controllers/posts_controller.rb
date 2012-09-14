@@ -1,4 +1,8 @@
+require 'logging'
+
 class PostsController < ApplicationController
+
+  include Logging
 
   # GET /posts
   # GET /posts.json
@@ -14,8 +18,7 @@ class PostsController < ApplicationController
           @posts = Post.where("user_id = ?", user_id)
           render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
         else
-          @errormsg = { "errormsg" => "Missing user" }
-          render json: @errormsg, status: :unprocessable_entity
+          create_error(:unprocessable_entity, :get, params[:post], "User not found")
         end
       }
     end
@@ -89,13 +92,15 @@ class PostsController < ApplicationController
           if @post.save
             render json: @post.as_json(:only => [:id, :img, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
           else
-            render json: @post.errors, status: :unprocessable_entity
+            create_error(:unprocessable_entity, :post, params[:post], @post.errors)
           end
         }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:unprocessable_entity, :post, params[:post], "Exception occurred")
+        }
       end
     end
   end
@@ -154,10 +159,13 @@ class PostsController < ApplicationController
         else
           if beacontime_error
             # create an error because we're trying to set a live beacon when one already exists
-            @errormsg = { "errormsg" => "Beacon already exist on another post" }
-            render json: @errormsg, status: :forbidden
+            create_error(:forbidden, :put, post_params, "Beacon already exist on another post")
           else
-            render json: @post.errors, status: :unprocessable_entity
+            if supply_error
+              create_error(:forbidden, :put, post_params, "Supply updates must stand alone")
+            else
+              create_error(:unprocessable_entity, :put, post_params, @post.errors)
+            end
           end
         end
       }
@@ -199,7 +207,10 @@ class PostsController < ApplicationController
 
         format.json { render json: @posts.as_json }
       else
-        format.json { render :status => 400, :json => { :status => :error, :message => "Error!" }}
+        format.json {
+          input_list = { :userid => userid, :current_latitude => current_latitude, :current_longitude => current_longitude }
+          create_error(:unprocessable_entity, :scan, input_list, "Missing required parameter")
+        }
       end
     end
   end

@@ -1,4 +1,8 @@
+require 'logging'
+
 class FlyerLocsController < ApplicationController
+
+  include Logging
 
   def index
     respond_to do |format|
@@ -10,7 +14,9 @@ class FlyerLocsController < ApplicationController
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:forbidden, :get, params[:flyer_loc], "Data incorrect")
+        }
       end
     end
   end
@@ -25,7 +31,9 @@ class FlyerLocsController < ApplicationController
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:forbidden, :get, params[:flyer_loc], "Data incorrect")
+        }
       end
     end
   end
@@ -52,14 +60,15 @@ class FlyerLocsController < ApplicationController
               render json: @flyer_loc.errors, status: :unprocessable_entity
             end
           else
-            @errormsg = { "errormsg" => "Data incorrect" }
-            render json: @errormsg, status: :forbidden
+            create_error(:forbidden, :post, params[:flyer_loc], "Data incorrect")
           end
         }
       rescue
         @errormsg = { "errormsg" => "Data incorrect" }
         format.html { render 'posts/error', status: :forbidden }
-        format.json { render json: @errormsg, status: :forbidden }
+        format.json {
+          create_error(:forbidden, :post, params[:flyer_loc], "Data incorrect")
+        }
       end
     end
   end
