@@ -54,6 +54,7 @@ class FlyerPathsController < ApplicationController
         if flyer_path.valid?
           format.html { redirect_to @user, notice: 'Flyer path was successfully created.' }
           format.json {
+            log_event(:flyer_path, :create, flyer_path.as_json)
             if ApplicationHelper.validate_key(request.headers["Validation-Key"])
               # this is a test response, don't send the created_at field
               render json: flyer_path.as_json(:only => [:id])
@@ -84,7 +85,10 @@ class FlyerPathsController < ApplicationController
     respond_to do |format|
       if @flyer_path.update_attributes(params[:flyer_path])
         format.html { redirect_to @user, notice: 'Flyer path was successfully updated.' }
-        format.json { render json: @flyer_path.as_json(:only => [:id]) }
+        format.json {
+          log_event(:flyer_path, :update, @flyer_path.as_json)
+          render json: @flyer_path.as_json(:only => [:id])
+        }
       else
         format.html { render action: "edit" }
         format.json {

@@ -106,6 +106,8 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        log_event(:user, :created, user_params)
+
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
         # should only be used for debugging purposes.
@@ -164,6 +166,7 @@ class UsersController < ApplicationController
             end
 
             if @user.update_attributes(user_params)
+              log_event(:user, :updated, user_params)
               render json: @user.as_json(:only => [:id])
             else
               # Some error happened while trying to update the user
@@ -201,6 +204,7 @@ class UsersController < ApplicationController
         @user = User.where("fbid = ?", "#{facebookid}").first
         format.json {
           if @user
+            log_event(:user, :facebook, @user.as_json)
             render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])
           else
             create_error(:not_found, :get, facebookid, "Could not find matching user for facebookid")

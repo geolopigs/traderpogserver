@@ -66,6 +66,8 @@ class UserFlyersController < ApplicationController
             flyer_path = { "post1" => postid, "post2" => postid, "storms" => 0, "stormed" => 0, "done" => true, "item_info_id" => nil, "num_items" => 0, "price" => 0 }
             flyer_path_record = user_flyer.flyer_paths.create(flyer_path)
 
+            log_event(:user_flyer, :create, user_flyer.as_json)
+            log_event(:flyer_path, :create, flyer_path_record.as_json)
             render json: user_flyer.as_json(:only => [:id])
           else
             create_error(:unprocessable_entity, :post, user_flyer_params, user_flyer.errors)
@@ -108,6 +110,8 @@ class UserFlyersController < ApplicationController
         end
 
         if success
+          log_event(:user_flyer, :create, @userflyer.as_json)
+          log_event(:user_flyer, :create, @flyerpath.as_json)
           render json: @userflyer.as_json(:only => [:id])
         else
           create_error(:unprocessable_entity, :put, user_flyer_params + flyer_path_params, @user_flyer.errors)

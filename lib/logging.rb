@@ -6,9 +6,10 @@ module Logging
   WARNING_TYPE = "w"
   INFO_TYPE = "i"
   TRACE_TYPE = "t"
+  VERSION = "1.0"
 
   def internal_log(type, subtype, message)
-    full_msg = APP + "|" + type + "|" + subtype + "|"  + Time.now.to_s + "|"  + message
+    full_msg = APP + "|" + VERSION + "|" + type + "|" + subtype + "|"  + Time.now.to_s + "|"  + message
     puts full_msg
   end
 
@@ -26,6 +27,10 @@ module Logging
 
   def trace_log(subtype, message)
     internal_log(TRACE_TYPE, subtype, message)
+  end
+
+  def log_event(model, eventtype, eventdata)
+    info_log(model.to_s, eventtype.to_s + "|" + eventdata.to_s)
   end
 
   def create_error(status, calltype, inputs, message)

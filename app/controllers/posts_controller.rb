@@ -16,6 +16,7 @@ class PostsController < ApplicationController
        user_id = request.headers["user-id"]
        if user_id
           @posts = Post.where("user_id = ?", user_id)
+          log_event(:post, :retrieve_post, user_id)
           render json: @posts.as_json(:only => [:id, :img, :latitude, :longitude, :name, :user_id, :item_info_id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
         else
           create_error(:unprocessable_entity, :get, params[:post], "User not found")
@@ -36,6 +37,7 @@ class PostsController < ApplicationController
       }
       format.json {
         @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime")
+        log_event(:post, :retrieve_single_post, param[:id])
         render json: @post.as_json
       }
     end
@@ -90,6 +92,7 @@ class PostsController < ApplicationController
 
           @post = Post.new(post_params)
           if @post.save
+            log_event(:post, :create, @post.as_json)
             render json: @post.as_json(:only => [:id, :img, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
           else
             create_error(:unprocessable_entity, :post, params[:post], @post.errors)
@@ -151,11 +154,12 @@ class PostsController < ApplicationController
           end
         end
         if !supply_error && !beacontime_error && @post.update_attributes(post_params)
-            if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-              render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
-            else
-              render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
-            end
+          log_event(:post, :update, @post.as_json)
+          if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
+          else
+            render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel, :beacontime])
+          end
         else
           if beacontime_error
             # create an error because we're trying to set a live beacon when one already exists
@@ -192,6 +196,7 @@ class PostsController < ApplicationController
       current_longitude = request.headers["traderpog-longitude"]
       current_latitude = request.headers["traderpog-latitude"]
       fraction = 0.02
+      input_list = { :userid => userid, :current_latitude => current_latitude, :current_longitude => current_longitude }
       if (current_longitude != nil) && (current_latitude != nil) && (userid != nil)
         current_longitude = current_longitude.to_f
         current_latitude = current_latitude.to_f
@@ -204,11 +209,12 @@ class PostsController < ApplicationController
         regions_array << region
 
         @posts = Post.select("id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, disabled").where("region in (?) AND user_id <> ?", regions_array, userid).limit(100)
+        input_list.merge!(:posts => @posts.as_json)
+        log_event(:post, :scan, input_list)
 
         format.json { render json: @posts.as_json }
       else
         format.json {
-          input_list = { :userid => userid, :current_latitude => current_latitude, :current_longitude => current_longitude }
           create_error(:unprocessable_entity, :scan, input_list, "Missing required parameter")
         }
       end
@@ -246,7 +252,8 @@ class PostsController < ApplicationController
           beacon_list << beacon
         end
       end
-
+      beacon_info = { :userid => userid, :beacons => beacon_list }
+      log_event(:post, :beacons, beacon_list)
       format.json { render json: beacon_list.as_json }
     end
   end
