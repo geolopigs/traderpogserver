@@ -8,7 +8,11 @@ TraderPog::Application.routes.draw do
     resources :user_leaderboards
     resources :userconfigs
     resources :user_flyers do
-      resources :flyer_paths
+      resources :flyer_paths do
+        collection do
+          put 'setdone'
+        end
+      end
     end
   end
 
