@@ -1,9 +1,11 @@
 require 'securerandom'
 require 'logging'
+require 'user_leaderboards_helper'
 
 class UsersController < ApplicationController
 
   include Logging
+  include UserLeaderboardsHelper
 
   def insert_new_friend(user, new_fbid)
     friends_list = user[:fb_friends]
@@ -167,6 +169,14 @@ class UsersController < ApplicationController
 
             if @user.update_attributes(user_params)
               log_event(:user, :updated, user_params)
+
+              # update leaderboard for bucks
+              bucks = user_params[:bucks]
+              if bucks
+                start_date = Time.now.beginning_of_week.to_date
+                update_coins_lb(@user.id, bucks, start_date)
+              end
+
               render json: @user.as_json(:only => [:id])
             else
               # Some error happened while trying to update the user
@@ -175,9 +185,9 @@ class UsersController < ApplicationController
           else
             create_error(:unprocessable_entity, :put, user_params, "FacebookID already associated with different user")
           end
-        rescue
+        #rescue
           # User does not exist.
-          create_error(:unprocessable_entity, :put, params[:user], "User does not exist")
+        #  create_error(:unprocessable_entity, :put, params[:user], "Encountered error")
         end
       }
     end

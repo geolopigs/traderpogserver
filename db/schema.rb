@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120905161104) do
+ActiveRecord::Schema.define(:version => 20120916175311) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -130,6 +130,17 @@ ActiveRecord::Schema.define(:version => 20120905161104) do
 
   add_index "user_flyers", ["flyer_info_id"], :name => "index_user_flyers_on_flyer_info_id"
   add_index "user_flyers", ["user_id"], :name => "index_user_flyers_on_user_id"
+
+  create_table "user_leaderboards", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "lbtype"
+    t.integer  "lbvalue"
+    t.date     "weekof"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "user_leaderboards", ["user_id"], :name => "index_user_leaderboards_on_user_id"
 
   create_table "userconfigs", :force => true do |t|
     t.string   "key"

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user: 
+  type: 1
+  value: 1
+  weekof: 2012-09-16
+
+two:
+  user: 
+  type: 1
+  value: 1
+  weekof: 2012-09-16

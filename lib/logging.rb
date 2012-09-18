@@ -33,6 +33,11 @@ module Logging
     info_log(model.to_s, eventtype.to_s + "|" + eventdata.to_s)
   end
 
+  def log_error(status, calltype, inputs, message)
+    full_message = { :calltype => calltype.to_s, :inputs => inputs, :errors => message }
+    error_log(status.to_s, full_message.as_json.to_s)
+  end
+
   def create_error(status, calltype, inputs, message)
     full_message = { :calltype => calltype.to_s, :inputs => inputs, :errors => message }
     error_log(status.to_s, full_message.as_json.to_s)
