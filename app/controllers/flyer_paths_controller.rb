@@ -125,9 +125,9 @@ class FlyerPathsController < ApplicationController
 
           if !(@latest_path.done)
             # validate this is the right flyer path
-            post1_valid = ((params[:post1] && (Integer(params[:post1]) == Integer(@latest_path.post1)) ||
+            post1_valid = ((params[:post1] && (Integer(params[:post1]) == Integer(@latest_path.post1))) ||
                 (!params[:post1] && (params[:longitude1].to_f.round(3) == @latest_path.longitude1.to_f.round(3)) && (params[:latitude1].to_f.round(3) == @latest_path.latitude1.to_f.round(3))))
-            post2_valid = ((params[:post2] && (Integer(params[:post2]) == Integer(@latest_path.post2)) ||
+            post2_valid = ((params[:post2] && (Integer(params[:post2]) == Integer(@latest_path.post2))) ||
                 (!params[:post2] && (params[:longitude2].to_f.round(3) == @latest_path.longitude2.to_f.round(3)) && (params[:latitude2].to_f.round(3) == @latest_path.latitude2.to_f.round(3))))
 
             log_trace(:flyer_path, :setdone, "params|" + params.to_s)
