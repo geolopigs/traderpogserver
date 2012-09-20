@@ -8,6 +8,7 @@ class UsersController < ApplicationController
   include UserLeaderboardsHelper
 
   def insert_new_friend(user, new_fbid)
+    puts "In insert_new_friend"
     friends_list = user[:fb_friends]
     if !friends_list
       friends_list = ""
@@ -17,7 +18,12 @@ class UsersController < ApplicationController
     end
     friends_list << new_fbid
     update_hash = { :fb_friends => friends_list }
+    puts "current user:"
+    puts user.as_json
+    puts "update_hash:"
+    puts update_hash.as_json
     user.update_attributes(update_hash)
+    puts "exiting insert_new_friend"
   end
 
   def fb_friends_helper(current_fbid, raw_friends)
