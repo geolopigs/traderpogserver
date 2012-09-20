@@ -133,13 +133,19 @@ class UsersController < ApplicationController
         #if !(@friends_list.empty?)
         #  @friends_list << "|"
         #end
-        @friends_list << (@user.as_json(:only => [:fbid]))["fbid"]
+        #@friends_list << (@user.as_json(:only => [:fbid]))["fbid"]
 
         test2 = "FB Friends 2:" + @friends_list
         puts test2
 
         update_hash = { :fb_friends => @user.fbid }
-        @current_user.update_attributes(update_hash)
+        if @current_user.update_attributes(update_hash)
+          test4 = "Update good! = " + @current_user.as_json
+          puts test4
+        else
+          test5 = "Update bad! = " + @current_user.as_json
+          puts test5
+        end
 
         @user_2 = User.find(2)
         test3 = "User: " + @user_2.as_json.to_s
