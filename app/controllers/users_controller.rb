@@ -117,7 +117,7 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
-        @current_user = User.find(@user.id)
+        @current_user = User.find(2)
         update_hash = { :fb_friends => @user.fbid }
         @current_user.update_attributes(update_hash)
 
