@@ -146,8 +146,8 @@ class UsersController < ApplicationController
           end
           friends_list << @user.fbid
           update_hash = { :fb_friends => friends_list }
+          @current_user.fb_friends_will_change!
           @current_user.update_attributes(update_hash)
-          @current_user.reload
         end
 
         test5 = User.find(2)
