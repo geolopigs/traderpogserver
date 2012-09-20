@@ -84,10 +84,6 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
 
-    @current_user = User.find(2)
-    update_hash = { :fb_friends => "12345" }
-    @current_user.update_attributes(update_hash)
-
     # Make a copy of the user params
     user_params = (params[:user]).clone
 
@@ -120,6 +116,10 @@ class UsersController < ApplicationController
         update_bucks_lb(@user.id, user_params[:bucks], start_date)
 
         log_event(:user, :created, user_params)
+
+        @current_user = User.find(2)
+        update_hash = { :fb_friends => "12345" }
+        @current_user.update_attributes(update_hash)
 
         test5 = User.find(2)
         puts "In Main function:"
