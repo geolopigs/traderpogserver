@@ -101,30 +101,15 @@ class UsersController < ApplicationController
     if friends
       fbid = user_params[:fbid]
       available_friends = fb_friends_helper(fbid, friends)
-      test = User.find(2)
-      puts "In Main function1:"
-      puts test.as_json
 
       user_params.merge!(:fb_friends => available_friends)
-
-      test2 = User.find(2)
-      puts "In Main function2:"
-      puts test2.as_json
     end
 
     # Create the new user
     @user = User.new(user_params)
 
-    test3 = User.find(2)
-    puts "In Main function3:"
-    puts test3.as_json
-
     respond_to do |format|
       if @user.save
-
-        test4 = User.find(2)
-        puts "In Main function4:"
-        puts test4.as_json
 
         # Update bucks for the user for this week
         start_date = Time.now.beginning_of_week.to_date
@@ -132,26 +117,21 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
-        raw_friends = @user.fb_friends
-        friends_array = raw_friends.split("|")
-        trimmed_list = User.where(:fbid => friends_array)
-        trimmed_list.each do |friend|
-          @current_user = User.find(friend.id)
-          friends_list = @current_user[:fb_friends]
-          if !friends_list
-            friends_list = ""
-          end
-          if !friends_list.empty?
-            friends_list << "|"
-          end
-          friends_list << @user.fbid
-          update_hash = { :fb_friends => friends_list }
-          @current_user.fb_friends_will_change!
-          @current_user.update_attributes(update_hash)
+        @current_user = User.find(2)
+        friends_list = @current_user[:fb_friends]
+        if !friends_list
+          friends_list = ""
         end
+        if !friends_list.empty?
+          friends_list << "|"
+        end
+        friends_list << @user.fbid
+        update_hash = { :fb_friends => friends_list }
+        @current_user.fb_friends_will_change!
+        @current_user.update_attributes(update_hash)
 
         test5 = User.find(2)
-        puts "In Main function5:"
+        puts "In Main function:"
         puts test5.as_json
 
         # Be cautious about creating users through the website. The general case is
