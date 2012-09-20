@@ -29,6 +29,10 @@ module Logging
     internal_log(TRACE_TYPE, subtype, message)
   end
 
+  def log_trace(model, eventtype, eventdata)
+    trace_log(model.to_s, eventtype.to_s + "|" + eventdata.to_s)
+  end
+
   def log_event(model, eventtype, eventdata)
     info_log(model.to_s, eventtype.to_s + "|" + eventdata.to_s)
   end

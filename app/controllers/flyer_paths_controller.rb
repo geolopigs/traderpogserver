@@ -129,8 +129,14 @@ class FlyerPathsController < ApplicationController
                 (!params[:post1] && (params[:longitude1] == @latest_path.longitude1) && (params[:latitude1] == @latest_path.latitude1)))
             post2_valid = ((params[:post2] && (params[:post2] == @latest_path.post2)) ||
                 (!params[:post2] && (params[:longitude2] == @latest_path.longitude2) && (params[:latitude2] == @latest_path.latitude2)))
+
+            log_trace(:flyer_path, :setdone, "params|" + params.to_s)
+            log_trace(:flyer_path, :setdone, "latest_path|" + @latest_path.as_json.to_s)
+
             if (post1_valid && post2_valid)
               if @latest_path.update_attributes({:done => true})
+
+                log_event(:flyer_path, :setdone, "success")
 
                 # Update leaderboards
                 # Add one more to the number of player posts visited
