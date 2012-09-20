@@ -8,7 +8,6 @@ class UsersController < ApplicationController
   include UserLeaderboardsHelper
 
   def insert_new_friend(userid, new_fbid)
-    puts "In insert_new_friend"
     @current_user = User.find(userid)
     friends_list = @current_user[:fb_friends]
     if !friends_list
@@ -19,19 +18,7 @@ class UsersController < ApplicationController
     end
     friends_list << new_fbid
     update_hash = { :fb_friends => friends_list }
-    puts "current user:"
-    puts @current_user.as_json
-    puts "update_hash:"
-    puts update_hash.as_json
-    if @current_user.update_attributes(update_hash)
-      puts "SHOULD HAVE WORKED!"
-      @new_current_user = User.find(userid)
-      puts @new_current_user.as_json
-    else
-      puts "OMG SOMETHING FAILED!"
-      puts @current_user.errors.to_s
-    end
-    puts "exiting insert_new_friend"
+    @current_user.update_attributes(update_hash)
   end
 
   def fb_friends_helper(current_fbid, raw_friends)
@@ -45,11 +32,8 @@ class UsersController < ApplicationController
         available_friends << "|"
       end
       available_friends << friend[:fbid]
-      insert_new_friend(friend.id, current_fbid)
+      #insert_new_friend(friend.id, current_fbid)
     end
-    puts "In fb_friends_helper!"
-    @new_current_user = User.find(2)
-    puts @new_current_user.as_json
     available_friends
   end
 
@@ -147,6 +131,13 @@ class UsersController < ApplicationController
         update_bucks_lb(@user.id, user_params[:bucks], start_date)
 
         log_event(:user, :created, user_params)
+
+        raw_friends = @user.fb_friends
+        friends_array = raw_friends.split("|")
+        trimmed_list = User.where(:fbid => friends_array)
+        trimmed_list.each do |friend|
+          insert_new_friend(friend.id, @user.fbid)
+        end
 
         test5 = User.find(2)
         puts "In Main function5:"
