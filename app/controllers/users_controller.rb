@@ -117,9 +117,9 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
-        #@raw_friends = @user.fb_friends
-        #@friends_array = @raw_friends.split("|")
-        #@current_friend = User.where(:fbid => @friends_array).first
+        @raw_friends = @user.fb_friends
+        @friends_array = @raw_friends.split("|")
+        @current_friend = User.where(:fbid => @friends_array).first
         @current_user = User.find(2)
         #@friends_list = @current_user.fb_friends
 
