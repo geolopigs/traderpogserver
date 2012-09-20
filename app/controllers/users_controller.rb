@@ -108,6 +108,10 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+        # Update bucks for the user for this week
+        start_date = Time.now.beginning_of_week.to_date
+        update_bucks_lb(@user.id, user_params[:bucks], start_date)
+
         log_event(:user, :created, user_params)
 
         # Be cautious about creating users through the website. The general case is
@@ -174,7 +178,7 @@ class UsersController < ApplicationController
               bucks = user_params[:bucks]
               if bucks
                 start_date = Time.now.beginning_of_week.to_date
-                update_coins_lb(@user.id, bucks, start_date)
+                update_bucks_lb(@user.id, bucks, start_date)
               end
 
               render json: @user.as_json(:only => [:id])
