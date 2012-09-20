@@ -13,9 +13,9 @@ class UsersController < ApplicationController
       friends_list = ""
     end
     if !friends_list.empty?
-      friends_list << "|"
+      friends_list = friends_list + "|"
     end
-    friends_list << new_fbid
+    friends_list = friends_list + new_fbid
     update_hash = { :fb_friends => friends_list }
     user.update_attributes(update_hash)
   end
