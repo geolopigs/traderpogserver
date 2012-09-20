@@ -47,6 +47,9 @@ class UsersController < ApplicationController
       available_friends << friend[:fbid]
       insert_new_friend(friend.id, current_fbid)
     end
+    puts "In fb_friends_helper!"
+    @new_current_user = User.find(2)
+    puts @new_current_user.as_json
     available_friends
   end
 
@@ -114,7 +117,15 @@ class UsersController < ApplicationController
     if friends
       fbid = user_params[:fbid]
       available_friends = fb_friends_helper(fbid, friends)
+      test = User.find(2)
+      puts "In Main function2:"
+      puts test.as_json
+
       user_params.merge!(:fb_friends => available_friends)
+
+      test2 = User.find(2)
+      puts "In Main function2:"
+      puts test2.as_json
     end
 
     # Create the new user
@@ -128,9 +139,9 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
-        test = User.find(2)
-        puts "In Main function:"
-        puts test.as_json
+        test3 = User.find(2)
+        puts "In Main function2:"
+        puts test3.as_json
 
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
