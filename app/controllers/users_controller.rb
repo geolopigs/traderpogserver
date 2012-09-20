@@ -25,6 +25,8 @@ class UsersController < ApplicationController
     puts update_hash.as_json
     if @current_user.update_attributes(update_hash)
       puts "SHOULD HAVE WORKED!"
+      @new_current_user = User.find(userid)
+      puts @new_current_user.as_json
     else
       puts "OMG SOMETHING FAILED!"
       puts @current_user.errors.to_s
@@ -125,6 +127,10 @@ class UsersController < ApplicationController
         update_bucks_lb(@user.id, user_params[:bucks], start_date)
 
         log_event(:user, :created, user_params)
+
+        test = User.find(2)
+        puts "In Main function:"
+        puts test.as_json
 
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
