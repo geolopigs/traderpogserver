@@ -22,7 +22,12 @@ class UsersController < ApplicationController
     puts user.as_json
     puts "update_hash:"
     puts update_hash.as_json
-    user.update_attributes(update_hash)
+    if user.update_attributes(update_hash)
+      puts "SHOULD HAVE WORKED!"
+    else
+      puts "OMG SOMETHING FAILED!"
+      puts @user.errors.to_s
+    end
     puts "exiting insert_new_friend"
   end
 
