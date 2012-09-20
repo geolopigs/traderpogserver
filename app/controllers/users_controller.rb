@@ -120,7 +120,8 @@ class UsersController < ApplicationController
         @raw_friends = @user.fb_friends
         @friends_array = @raw_friends.split("|")
         @current_user = User.where(:fbid => @friends_array).first
-        @friends_list = (@current_user.as_json(:only => :fb_friends))[:fb_friends]
+
+        @friends_list = (@current_user.as_json(:only => [:fb_friends]))["fb_friends"]
 
         if !(@friends_list)
           @friends_list = ""
@@ -132,7 +133,7 @@ class UsersController < ApplicationController
         #if !(@friends_list.empty?)
         #  @friends_list << "|"
         #end
-        @friends_list << (@user.as_json(:only => :fbid))[:fbid]
+        @friends_list << (@user.as_json(:only => [:fbid]))["fbid"]
 
         test2 = "FB Friends 2:" + @friends_list
         puts test2
