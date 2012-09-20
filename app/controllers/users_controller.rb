@@ -120,7 +120,7 @@ class UsersController < ApplicationController
         @raw_friends = @user.fb_friends
         @friends_array = @raw_friends.split("|")
         @current_user = User.where(:fbid => @friends_array).first
-        @friends_list = @current_user.fb_friends
+        @friends_list = @current_user.fb_friends.to_s
 
         #test1 = "FB Friends 1:" + @friends_list
         #puts test1
@@ -131,7 +131,7 @@ class UsersController < ApplicationController
         #if !(@friends_list.empty?)
         #  @friends_list << "|"
         #end
-        @friends_list << @user.fbid
+        @friends_list << @user.fbid.to_s
 
         #test2 = "FB Friends 2:" + @friends_list
         #puts test2
