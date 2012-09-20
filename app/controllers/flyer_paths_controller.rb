@@ -126,9 +126,9 @@ class FlyerPathsController < ApplicationController
           if !(@latest_path.done)
             # validate this is the right flyer path
             post1_valid = ((params[:post1] && (params[:post1] == @latest_path.post1)) ||
-                (!params[:post1] && (params[:longitude1] == @latest_path.longitude1) && (params[:latitude1] == @latest_path.latitude1)))
+                (!params[:post1] && (params[:longitude1].round(3) == @latest_path.longitude1.round(3)) && (params[:latitude1].round(3) == @latest_path.latitude1.round(3))))
             post2_valid = ((params[:post2] && (params[:post2] == @latest_path.post2)) ||
-                (!params[:post2] && (params[:longitude2] == @latest_path.longitude2) && (params[:latitude2] == @latest_path.latitude2)))
+                (!params[:post2] && (params[:longitude2].round(3) == @latest_path.longitude2.round(3)) && (params[:latitude2].round(3) == @latest_path.latitude2.round(3))))
 
             log_trace(:flyer_path, :setdone, "params|" + params.to_s)
             log_trace(:flyer_path, :setdone, "latest_path|" + @latest_path.as_json.to_s)
