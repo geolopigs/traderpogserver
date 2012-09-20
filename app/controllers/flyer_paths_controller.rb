@@ -132,8 +132,8 @@ class FlyerPathsController < ApplicationController
 
             log_trace(:flyer_path, :setdone, "params|" + params.to_s)
             log_trace(:flyer_path, :setdone, "latest_path|" + @latest_path.as_json.to_s)
-            log_trade(:flyer_path, :setdone, "Post1_valid:" + post1_valid.to_s)
-            log_trade(:flyer_path, :setdone, "Post2_valid:" + post2_valid.to_s)
+            log_trace(:flyer_path, :setdone, "Post1_valid:" + post1_valid.to_s)
+            log_trace(:flyer_path, :setdone, "Post2_valid:" + post2_valid.to_s)
 
             if (post1_valid && post2_valid)
               if @latest_path.update_attributes({:done => true})
