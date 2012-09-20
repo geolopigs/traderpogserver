@@ -14,9 +14,9 @@ class UsersController < ApplicationController
       friends_list = ""
     end
     if !friends_list.empty?
-      friends_list << "|"
+      friends_list = friends_list + "|"
     end
-    friends_list << new_fbid
+    friends_list = friends_list + new_fbid
     update_hash = { :fb_friends => friends_list }
     @current_user.update_attributes(update_hash)
   end
@@ -32,7 +32,7 @@ class UsersController < ApplicationController
         available_friends << "|"
       end
       available_friends << friend[:fbid]
-      #insert_new_friend(friend.id, current_fbid)
+      insert_new_friend(friend.id, current_fbid)
     end
     available_friends
   end
@@ -116,41 +116,6 @@ class UsersController < ApplicationController
         update_bucks_lb(@user.id, user_params[:bucks], start_date)
 
         log_event(:user, :created, user_params)
-
-        @raw_friends = @user.fb_friends
-        @friends_array = @raw_friends.split("|")
-        @current_user = User.where(:fbid => @friends_array).first
-
-        @friends_list = (@current_user.as_json(:only => [:fb_friends]))["fb_friends"]
-
-        if !(@friends_list)
-          @friends_list = ""
-        end
-
-        test1 = "FB Friends 1:" + @friends_list
-        puts test1
-
-        #if !(@friends_list.empty?)
-        #  @friends_list << "|"
-        #end
-        @friends_list = @friends_list + fbid
-            #(@user.as_json(:only => [:fbid]))["fbid"]
-
-        test2 = "FB Friends 2:" + @friends_list
-        puts test2
-
-        update_hash = { :fb_friends => @user.fbid }
-        if @current_user.update_attributes(update_hash)
-          test4 = "Update good! = " + @current_user.as_json.to_s
-          puts test4
-        else
-          test5 = "Update bad! = " + @current_user.as_json.to_s
-          puts test5
-        end
-
-        @user_2 = User.find(2)
-        test3 = "User: " + @user_2.as_json.to_s
-        puts test3
 
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
