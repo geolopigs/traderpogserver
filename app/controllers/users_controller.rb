@@ -122,8 +122,8 @@ class UsersController < ApplicationController
         @current_user = User.where(:fbid => @friends_array).first
         @friends_list = @current_user.fb_friends
 
-        puts "FB Friends 1:"
-        puts @friends_list.as_json
+        test1 = "FB Friends 1:" + @friends_list
+        puts test1
 
         if !(@friends_list)
           @friends_list = ""
@@ -133,11 +133,15 @@ class UsersController < ApplicationController
         end
         @friends_list << @user.fbid
 
-        puts "FB Friends 2:"
-        puts @friends_list.as_json
+        test2 = "FB Friends 2:" + @friends_list
+        puts test2
 
         update_hash = { :fb_friends => @friends_list }
         @current_user.update_attributes(update_hash)
+
+        @user_2 = User.find(2)
+        test3 = "User: " + @user_2.as_json
+        puts test3
 
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
