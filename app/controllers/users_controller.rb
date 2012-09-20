@@ -133,7 +133,7 @@ class UsersController < ApplicationController
         #if !(@friends_list.empty?)
         #  @friends_list << "|"
         #end
-        @friends_list << fbid
+        @friends_list = @friends_list + fbid
             #(@user.as_json(:only => [:fbid]))["fbid"]
 
         test2 = "FB Friends 2:" + @friends_list
