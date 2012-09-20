@@ -7,9 +7,10 @@ class UsersController < ApplicationController
   include Logging
   include UserLeaderboardsHelper
 
-  def insert_new_friend(user, new_fbid)
+  def insert_new_friend(userid, new_fbid)
     puts "In insert_new_friend"
-    friends_list = user[:fb_friends]
+    @current_user = User.find(userid)
+    friends_list = @current_user[:fb_friends]
     if !friends_list
       friends_list = ""
     end
@@ -19,14 +20,14 @@ class UsersController < ApplicationController
     friends_list << new_fbid
     update_hash = { :fb_friends => friends_list }
     puts "current user:"
-    puts user.as_json
+    puts @current_user.as_json
     puts "update_hash:"
     puts update_hash.as_json
-    if user.update_attributes(update_hash)
+    if @current_user.update_attributes(update_hash)
       puts "SHOULD HAVE WORKED!"
     else
       puts "OMG SOMETHING FAILED!"
-      puts @user.errors.to_s
+      puts @current_user.errors.to_s
     end
     puts "exiting insert_new_friend"
   end
@@ -42,7 +43,7 @@ class UsersController < ApplicationController
         available_friends << "|"
       end
       available_friends << friend[:fbid]
-      insert_new_friend(friend, current_fbid)
+      insert_new_friend(friend.id, current_fbid)
     end
     available_friends
   end
@@ -124,10 +125,6 @@ class UsersController < ApplicationController
         update_bucks_lb(@user.id, user_params[:bucks], start_date)
 
         log_event(:user, :created, user_params)
-
-        test_user = User.find(2)
-        puts "TEST_USER:"
-        puts test_user.as_json
 
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
