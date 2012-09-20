@@ -125,6 +125,10 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
+        test_user = User.find(2)
+        puts "TEST_USER:"
+        puts test_user.as_json
+
         # Be cautious about creating users through the website. The general case is
         # that users are only ever created via the JSON API. The website interface
         # should only be used for debugging purposes.
