@@ -1,21 +1,50 @@
 module UserLeaderboardsHelper
 
   # types of leaderboards
-  COINS = 1
+  BUCKS = 1
   TOTAL_DISTANCE = 2
   FURTHEST_DISTANCE = 3
   PLAYER_POSTS_VISITED = 4
-  BEACONS_VISITED = 5
 
-  def internal_update_lb(userid, current_type, current_value, startdate)
+  # types of board styles
+  STANDARD = 1
+  ADDITIVE = 2
+  GREATER_THAN = 3
+  LESS_THAN = 4
+
+  def internal_update_lb(userid, current_type, board_style, current_value, startdate)
     success = true
     current_user = User.find(userid)
     board = current_user.user_leaderboards.where("lbtype = ? and weekof = ?", current_type, startdate)
     if board.length == 1
-      # Existing value, go ahead and update the value
-      update_params = { :value => current_value }
-      if board.first.update_attributes(update_params)
-        log_event(:userleaderboard, :update, board.first.as_json)
+      update_board = true
+      case board_style
+        when ADDITIVE
+          update_params = { :lbvalue => (board.first.value + current_value) }
+        when GREATER_THAN
+          if current_value > board.first.value
+            update_params = { :lbvalue => current_value }
+          else
+            update_board = false
+          end
+        when LESS_THAN
+          if current_value < board.first.value
+            update_params = { :lbvalue => current_value }
+          else
+            update_board = false
+          end
+        else
+          update_params = { :lbvalue => current_value }
+      end
+
+      if update_board
+        if board.first.update_attributes(update_params)
+          log_event(:userleaderboard, :update, board.first.as_json)
+        else
+          log_error(:unprocessable_entity, :put, update_params, "Error happened during board update")
+        end
+      else
+        log_event(:userleaderboard, :update, "No change to leaderboard")
       end
     else
       if board.length == 0
@@ -31,11 +60,35 @@ module UserLeaderboardsHelper
     end
   end
 
-  def update_coins_lb(userid, value, startdate)
+  def update_bucks_lb(userid, value, startdate)
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
-      internal_update_lb(userid, COINS, value, Time.utc(2000,"jan",1).beginning_of_week.to_date)
+      internal_update_lb(userid, BUCKS, STANDARD, value, Time.utc(2000,"jan",1).beginning_of_week.to_date)
     else
-      internal_update_lb(userid, COINS, value, startdate)
+      internal_update_lb(userid, BUCKS, STANDARD, value, startdate)
+    end
+  end
+
+  def update_totaldistance_lb(userid, value, startdate)
+    if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+      internal_update_lb(userid, TOTAL_DISTANCE, ADDITIVE, value, Time.utc(2000,"jan",1).beginning_of_week.to_date)
+    else
+      internal_update_lb(userid, TOTAL_DISTANCE, ADDITIVE, value, startdate)
+    end
+  end
+
+  def update_furthest_lb(userid, value, startdate)
+    if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+      internal_update_lb(userid, FURTHEST_DISTANCE, GREATER_THAN, value, Time.utc(2000,"jan",1).beginning_of_week.to_date)
+    else
+      internal_update_lb(userid, FURTHEST_DISTANCE, GREATER_THAN, value, startdate)
+    end
+  end
+
+  def update_playerposts_lb(userid, value, startdate)
+    if ApplicationHelper.validate_key(request.headers["Validation-Key"])
+      internal_update_lb(userid, PLAYER_POSTS_VISITED, ADDITIVE, value, Time.utc(2000,"jan",1).beginning_of_week.to_date)
+    else
+      internal_update_lb(userid, PLAYER_POSTS_VISITED, ADDITIVE, value, startdate)
     end
   end
 end

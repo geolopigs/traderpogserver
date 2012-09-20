@@ -1,8 +1,10 @@
 require 'logging'
+require 'user_leaderboards_helper'
 
 class FlyerPathsController < ApplicationController
 
   include Logging
+  include UserLeaderboardsHelper
 
   def index
     @user = User.find(params[:user_id])
@@ -129,6 +131,39 @@ class FlyerPathsController < ApplicationController
                 (!params[:post2] && (params[:longitude2] == @latest_path.longitude2) && (params[:latitude2] == @latest_path.latitude2)))
             if (post1_valid && post2_valid)
               if @latest_path.update_attributes({:done => true})
+
+                # Update leaderboards
+                # Add one more to the number of player posts visited
+                start_date = Time.now.beginning_of_week.to_date
+                if params[:post2]
+                  update_playerposts_lb(@user.id, 1, start_date)
+                end
+
+                # Update furthest distance and total distance traveled
+                lat1 = 0
+                lon1 = 0
+                lat2 = 0
+                lon2 = 0
+                if (params[:post1])
+                  post1 = Post.find(params[:post1])
+                  lat1 = post1.latitude
+                  lon1 = post1.longitude
+                else
+                  lat1 = params[:latitude1]
+                  lon1 = params[:longitude1]
+                end
+                if (params[:post2])
+                  post2 = Post.find(params[:post2])
+                  lat2 = post2.latitude
+                  lon2 = post2.longitude
+                else
+                  lat2 = params[:latitude2]
+                  lon2 = params[:longitude2]
+                end
+                distance = Integer(FlyerPathsHelper.haversine_distance(lat1, lon1, lat2, lon2))
+                update_totaldistance_lb(@user.id, distance, start_date)
+                update_furthest_lb(@user.id, distance, start_date)
+
                 render json: @latest_path.as_json(:only => [:id])
               else
                 create_error(:unprocessable_entity, :setdone, params, "Failed to set done on flight path")

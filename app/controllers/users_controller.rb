@@ -7,8 +7,9 @@ class UsersController < ApplicationController
   include Logging
   include UserLeaderboardsHelper
 
-  def insert_new_friend(user, new_fbid)
-    friends_list = user[:fb_friends]
+  def insert_new_friend(userid, new_fbid)
+    @current_user = User.find(userid)
+    friends_list = @current_user[:fb_friends]
     if !friends_list
       friends_list = ""
     end
@@ -17,7 +18,7 @@ class UsersController < ApplicationController
     end
     friends_list = friends_list + new_fbid
     update_hash = { :fb_friends => friends_list }
-    user.update_attributes(update_hash)
+    @current_user.update_attributes(update_hash)
   end
 
   def fb_friends_helper(current_fbid, raw_friends)
@@ -31,7 +32,7 @@ class UsersController < ApplicationController
         available_friends << "|"
       end
       available_friends << friend[:fbid]
-      insert_new_friend(friend, current_fbid)
+      insert_new_friend(friend.id, current_fbid)
     end
     available_friends
   end
@@ -100,6 +101,7 @@ class UsersController < ApplicationController
     if friends
       fbid = user_params[:fbid]
       available_friends = fb_friends_helper(fbid, friends)
+
       user_params.merge!(:fb_friends => available_friends)
     end
 
@@ -108,6 +110,11 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
+
+        # Update bucks for the user for this week
+        start_date = Time.now.beginning_of_week.to_date
+        update_bucks_lb(@user.id, user_params[:bucks], start_date)
+
         log_event(:user, :created, user_params)
 
         # Be cautious about creating users through the website. The general case is
@@ -174,7 +181,7 @@ class UsersController < ApplicationController
               bucks = user_params[:bucks]
               if bucks
                 start_date = Time.now.beginning_of_week.to_date
-                update_coins_lb(@user.id, bucks, start_date)
+                update_bucks_lb(@user.id, bucks, start_date)
               end
 
               render json: @user.as_json(:only => [:id])
