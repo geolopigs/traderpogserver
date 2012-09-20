@@ -119,7 +119,8 @@ class UsersController < ApplicationController
 
         @raw_friends = @user.fb_friends
         @friends_array = @raw_friends.split("|")
-        @current_user = User.where(:fbid => @friends_array).first
+        @current_friend = User.where(:fbid => @friends_array).first
+        @current_user = User.find(@current_friend)
         @friends_list = @current_user.fb_friends
 
         test1 = "FB Friends 1:" + @friends_list
@@ -136,7 +137,7 @@ class UsersController < ApplicationController
         test2 = "FB Friends 2:" + @friends_list
         puts test2
 
-        update_hash = { :fb_friends => @user.fbid }
+        update_hash = { :fb_friends => @friends_list }
         @current_user.update_attributes(update_hash)
 
         @user_2 = User.find(2)
