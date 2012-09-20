@@ -136,11 +136,11 @@ class UsersController < ApplicationController
         test2 = "FB Friends 2:" + @friends_list
         puts test2
 
-        update_hash = { :fb_friends => @friends_list }
+        update_hash = { :fb_friends => @user.fbid }
         @current_user.update_attributes(update_hash)
 
         @user_2 = User.find(2)
-        test3 = "User: " + @user_2.as_json
+        test3 = "User: " + @user_2.as_json.to_s
         puts test3
 
         # Be cautious about creating users through the website. The general case is
