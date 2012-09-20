@@ -117,25 +117,25 @@ class UsersController < ApplicationController
 
         log_event(:user, :created, user_params)
 
-        @raw_friends = @user.fb_friends
-        @friends_array = @raw_friends.split("|")
-        @current_friend = User.where(:fbid => @friends_array).first
+        #@raw_friends = @user.fb_friends
+        #@friends_array = @raw_friends.split("|")
+        #@current_friend = User.where(:fbid => @friends_array).first
         @current_user = User.find(2)
-        @friends_list = @current_user.fb_friends
+        #@friends_list = @current_user.fb_friends
 
-        test1 = "FB Friends 1:" + @friends_list
-        puts test1
+        #test1 = "FB Friends 1:" + @friends_list
+        #puts test1
 
-        if !(@friends_list)
-          @friends_list = ""
-        end
-        if !(@friends_list.empty?)
-          @friends_list << "|"
-        end
-        @friends_list << @user.fbid
+        #if !(@friends_list)
+        #  @friends_list = ""
+        #end
+        #if !(@friends_list.empty?)
+        #  @friends_list << "|"
+        #end
+        #@friends_list << @user.fbid
 
-        test2 = "FB Friends 2:" + @friends_list
-        puts test2
+        #test2 = "FB Friends 2:" + @friends_list
+        #puts test2
 
         update_hash = { :fb_friends => @user.fbid }
         @current_user.update_attributes(update_hash)
