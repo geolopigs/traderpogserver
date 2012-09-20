@@ -136,7 +136,17 @@ class UsersController < ApplicationController
         friends_array = raw_friends.split("|")
         trimmed_list = User.where(:fbid => friends_array)
         trimmed_list.each do |friend|
-          insert_new_friend(friend.id, @user.fbid)
+          @current_user = User.find(friend.id)
+          friends_list = @current_user[:fb_friends]
+          if !friends_list
+            friends_list = ""
+          end
+          if !friends_list.empty?
+            friends_list << "|"
+          end
+          friends_list << @user.fbid
+          update_hash = { :fb_friends => friends_list }
+          @current_user.update_attributes(update_hash)
         end
 
         test5 = User.find(2)
