@@ -125,13 +125,15 @@ class FlyerPathsController < ApplicationController
 
           if !(@latest_path.done)
             # validate this is the right flyer path
-            post1_valid = ((params[:post1] && (params[:post1] == @latest_path.post1)) ||
-                (!params[:post1] && (params[:longitude1].round(3) == @latest_path.longitude1.round(3)) && (params[:latitude1].round(3) == @latest_path.latitude1.round(3))))
-            post2_valid = ((params[:post2] && (params[:post2] == @latest_path.post2)) ||
-                (!params[:post2] && (params[:longitude2].round(3) == @latest_path.longitude2.round(3)) && (params[:latitude2].round(3) == @latest_path.latitude2.round(3))))
+            post1_valid = ((params[:post1] && (Integer(params[:post1]) == Integer(@latest_path.post1)) ||
+                (!params[:post1] && (params[:longitude1].to_f.round(3) == @latest_path.longitude1.to_f.round(3)) && (params[:latitude1].to_f.round(3) == @latest_path.latitude1.to_f.round(3))))
+            post2_valid = ((params[:post2] && (Integer(params[:post2]) == Integer(@latest_path.post2)) ||
+                (!params[:post2] && (params[:longitude2].to_f.round(3) == @latest_path.longitude2.to_f.round(3)) && (params[:latitude2].to_f.round(3) == @latest_path.latitude2.to_f.round(3))))
 
             log_trace(:flyer_path, :setdone, "params|" + params.to_s)
             log_trace(:flyer_path, :setdone, "latest_path|" + @latest_path.as_json.to_s)
+            log_trade(:flyer_path, :setdone, "Post1_valid:" + post1_valid.to_s)
+            log_trade(:flyer_path, :setdone, "Post2_valid:" + post2_valid.to_s)
 
             if (post1_valid && post2_valid)
               if @latest_path.update_attributes({:done => true})
