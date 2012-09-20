@@ -122,12 +122,13 @@ class UsersController < ApplicationController
         @current_user = User.where(:fbid => @friends_array).first
         @friends_list = (@current_user.as_json(:only => :fb_friends))[:fb_friends]
 
+        if !(@friends_list)
+          @friends_list = ""
+        end
+
         test1 = "FB Friends 1:" + @friends_list
         puts test1
 
-        #if !(@friends_list)
-        #  @friends_list = ""
-        #end
         #if !(@friends_list.empty?)
         #  @friends_list << "|"
         #end
