@@ -121,18 +121,18 @@ class UsersController < ApplicationController
         @friends_array = @raw_friends.split("|")
         @current_friend = User.where(:fbid => @friends_array).first
         @current_user = User.find(2)
-        @friends_list = @current_user.fb_friends
+        #@friends_list = @current_user.fb_friends
 
         #test1 = "FB Friends 1:" + @friends_list
         #puts test1
 
-        if !(@friends_list)
-          @friends_list = ""
-        end
-        if !(@friends_list.empty?)
-          @friends_list << "|"
-        end
-        @friends_list << @user.fbid
+        #if !(@friends_list)
+        #  @friends_list = ""
+        #end
+        #if !(@friends_list.empty?)
+        #  @friends_list << "|"
+        #end
+        #@friends_list << @user.fbid
 
         #test2 = "FB Friends 2:" + @friends_list
         #puts test2
