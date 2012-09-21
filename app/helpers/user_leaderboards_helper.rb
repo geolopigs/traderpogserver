@@ -20,15 +20,15 @@ module UserLeaderboardsHelper
       update_board = true
       case board_style
         when ADDITIVE
-          update_params = { :lbvalue => (board.first.value + current_value) }
+          update_params = { :lbvalue => (board.first.lbvalue + current_value) }
         when GREATER_THAN
-          if current_value > board.first.value
+          if current_value > board.first.lbvalue
             update_params = { :lbvalue => current_value }
           else
             update_board = false
           end
         when LESS_THAN
-          if current_value < board.first.value
+          if current_value < board.first.lbvalue
             update_params = { :lbvalue => current_value }
           else
             update_board = false
