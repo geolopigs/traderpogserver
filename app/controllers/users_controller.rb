@@ -10,15 +10,25 @@ class UsersController < ApplicationController
   def insert_new_friend(userid, new_fbid)
     @current_user = User.find(userid)
     friends_list = @current_user[:fb_friends]
-    if !friends_list
-      friends_list = ""
+
+    insert_new_fbid = true
+    if friends_list && !friends_list.empty?
+      # check that new_fbid doesn't already exist
+      friends_array = friends_list.split("|")
+      insert_new_fbid = !(friends_array.include?(new_fbid))
     end
-    if !friends_list.empty?
-      friends_list = friends_list + "|"
+
+    if (insert_new_fbid)
+      if !friends_list
+        friends_list = ""
+      end
+      if !friends_list.empty?
+        friends_list = friends_list + "|"
+      end
+      friends_list = friends_list + new_fbid
+      update_hash = { :fb_friends => friends_list }
+      @current_user.update_attributes(update_hash)
     end
-    friends_list = friends_list + new_fbid
-    update_hash = { :fb_friends => friends_list }
-    @current_user.update_attributes(update_hash)
   end
 
   def fb_friends_helper(current_fbid, raw_friends)

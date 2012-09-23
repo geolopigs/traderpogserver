@@ -125,9 +125,9 @@ class FlyerPathsController < ApplicationController
 
           if !(@latest_path.done)
             # validate this is the right flyer path
-            post1_valid = ((params[:post1] && (Integer(params[:post1]) == Integer(@latest_path.post1))) ||
+            post1_valid = ((params[:post1] && @latest_path.post1 &&(Integer(params[:post1]) == Integer(@latest_path.post1))) ||
                 (!params[:post1] && (params[:longitude1].to_f.round(3) == @latest_path.longitude1.to_f.round(3)) && (params[:latitude1].to_f.round(3) == @latest_path.latitude1.to_f.round(3))))
-            post2_valid = ((params[:post2] && (Integer(params[:post2]) == Integer(@latest_path.post2))) ||
+            post2_valid = ((params[:post2] && @latest_path.post2 && (Integer(params[:post2]) == Integer(@latest_path.post2))) ||
                 (!params[:post2] && (params[:longitude2].to_f.round(3) == @latest_path.longitude2.to_f.round(3)) && (params[:latitude2].to_f.round(3) == @latest_path.latitude2.to_f.round(3))))
 
             log_trace(:flyer_path, :setdone, "params|" + params.to_s)
@@ -180,7 +180,9 @@ class FlyerPathsController < ApplicationController
               create_error(:forbidden, :setdone, params, "Parameters do not match latest flight path")
             end
           else
-            create_error(:forbidden, :setdone, params, "Flight path is already done")
+            # Path has already been marked as done previously. Don't generate an error, just go ahead and return.
+            log_event(:flyer_path, :setdone, "Flight path is already done")
+            render json: @latest_path.as_json(:only => [:id])
           end
         #rescue
           #create_error(:unprocessable_entity, :setdone, params, "Data incorrect")
