@@ -5,7 +5,7 @@ class UserLeaderboardsController < ApplicationController
   include Logging
 
   # @param [Object] userid
-  def get_leaderboard_values_for_user(userid, fbid)
+  def get_leaderboard_values_for_user(userid, fbid, member)
     if ApplicationHelper.validate_key(request.headers["Validation-Key"])
       start_datetime = Time.utc(2000,"jan",1).beginning_of_week
     else
@@ -14,7 +14,7 @@ class UserLeaderboardsController < ApplicationController
     end
     boards = UserLeaderboard.where("user_id = ? and weekof = ?", userid, start_datetime.to_date).select("lbtype, lbvalue, weekof").as_json
     boards.each do |board|
-      board.merge!({ :fbid => fbid })
+      board.merge!({ :fbid => fbid, :member => member })
     end
     boards
   end
@@ -29,7 +29,7 @@ class UserLeaderboardsController < ApplicationController
         if userid
           # First, get the list of leaderboard values for current user
           current_user = User.find(userid)
-          user_leaderboard << get_leaderboard_values_for_user(userid, current_user.fbid)
+          user_leaderboard << get_leaderboard_values_for_user(userid, current_user.fbid, current_user.member)
 
           # Then, get leaderboard values for user's friends
           fbid_array = current_user.fb_friends
@@ -38,7 +38,7 @@ class UserLeaderboardsController < ApplicationController
             friends_list = User.where("fbid in (?)", fbid_array)
 
             friends_list.each do |friend|
-              user_leaderboard << get_leaderboard_values_for_user(friend.id, friend.fbid)
+              user_leaderboard << get_leaderboard_values_for_user(friend.id, friend.fbid, friend.member)
             end
           end
 

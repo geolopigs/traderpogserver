@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120916175311) do
+ActiveRecord::Schema.define(:version => 20120926063204) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(:version => 20120916175311) do
     t.text     "fb_friends"
     t.string   "email"
     t.string   "secretkey"
+    t.string   "fb_name"
   end
 
   add_index "users", ["fbid"], :name => "index_users_on_fbid"
