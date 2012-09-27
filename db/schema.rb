@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120926063204) do
+ActiveRecord::Schema.define(:version => 20120927163915) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20120926063204) do
     t.string   "topimg"
     t.string   "sideimg"
     t.boolean  "disabled"
+    t.integer  "load_time"
   end
 
   create_table "flyer_locs", :force => true do |t|

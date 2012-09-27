@@ -7,4 +7,5 @@ class FlyerInfo < ActiveRecord::Base
   validates :multiplier, :presence => true
   validates :price, :presence => true
   validates :tier, :presence => true
+  validates :load_time, :presence => true
 end
