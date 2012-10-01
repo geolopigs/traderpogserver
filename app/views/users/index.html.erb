@@ -1,31 +1,66 @@
-<h1>Listing users</h1>
+<h1>Users</h1>
 
 <table>
-  <tr>
-    <th>Member</th>
-    <th>Bucks</th>
-    <th>Email</th>
-    <th>SecretKey</th>
-    <th>FbID</th>
-    <th>Name</th>
-    <th>Facebook Friends</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
 <% @users.each do |user| %>
   <tr>
-    <td><%= user.member %></td>
-    <td><%= user.bucks %></td>
-    <td><%= user.email %></td>
-    <td><%= user.secretkey %></td>
-    <td><%= user.fbid %></td>
-    <td><%= user.fb_name %></td>
-    <td><%= user.fb_friends %></td>
-    <td><%= link_to 'Show', user %></td>
-    <td><%= link_to 'Edit', edit_user_path(user) %></td>
-    <td><%= link_to 'Destroy', user, confirm: 'Are you sure?', method: :delete %></td>
+    <details>
+      <summary><%= user.fb_name %>&nbsp;&nbsp;&nbsp;<b>ID:</b>&nbsp;<%= user.id %>&nbsp;&nbsp;&nbsp;<b>Bucks:</b>&nbsp;<%= user.bucks %>&nbsp;&nbsp;&nbsp;<b>Member:</b>&nbsp;<%= user.member %></summary>
+      <blockquote>
+        <p><b>FBID:</b>&nbsp;<%= user.fbid %></p>
+        <p><b>Friends:</b>&nbsp;<%= user.fb_friends %></p>
+        <p><b>Email:</b>&nbsp;<%= user.email %></p>
+        <p><b>SecretKey:</b>&nbsp;<%= user.secretkey %></p>
+        <p><%= link_to 'Show', user %>&nbsp;<%= link_to 'Edit', edit_user_path(user) %>&nbsp;<%= link_to 'Destroy', user, confirm: 'Are you sure?', method: :delete %></p>
+
+        <details>
+        <summary><b>Flyers</b></summary>
+          <blockquote>
+            <% user.user_flyers.each do |userflyer| %>
+              <p>
+                <b>ID:</b>&nbsp;<%= userflyer.id %>&nbsp;&nbsp;&nbsp;
+                <%= link_to 'Flyer Type', userflyer.flyer_info %>&nbsp;&nbsp;&nbsp;
+                <%= link_to 'Destroy', [userflyer.user, userflyer], confirm: 'Are you sure?', method: :delete %>
+              </p>
+              <details>
+                <summary><b>Paths</b></summary>
+                <blockquote>
+                  <% userflyer.flyer_paths.each do |path| %>
+                    <p>
+                      <b>ID:</b>&nbsp;<%= path.id %>&nbsp;&nbsp;&nbsp;
+                      <b>Start:</b>&nbsp;<%= path.created_at %>&nbsp;&nbsp;&nbsp;
+                      <b>Done:</b>&nbsp;<%= path.done %>&nbsp;&nbsp;&nbsp;
+                      <%= link_to 'Destroy', [path.user_flyer.user, path.user_flyer, path], confirm: 'Are you sure?', method: :delete %>
+                    </p>
+                      <blockquote>
+                        <p>
+                          <b>Item:</b>&nbsp;<%= path.item_info_id %>&nbsp;&nbsp;&nbsp;
+                          <b>Number:</b>&nbsp;<%= path.num_items %>&nbsp;&nbsp;&nbsp;
+                          <b>Price:</b>&nbsp;<%= path.price %>&nbsp;&nbsp;&nbsp;
+                        </p>
+                        <p>
+                          <b>Post1:</b>&nbsp;<%= path.post1 %>&nbsp;&nbsp;&nbsp;
+                          <b>Latitude1:</b>&nbsp;<%= path.latitude1 %>&nbsp;&nbsp;&nbsp;
+                          <b>Longitude1:</b>&nbsp;<%= path.longitude1 %>&nbsp;&nbsp;&nbsp;
+                        </p>
+                        <p>
+                          <b>Post2:</b>&nbsp;<%= path.post2 %>&nbsp;&nbsp;&nbsp;
+                          <b>Latitude2:</b>&nbsp;<%= path.latitude2 %>&nbsp;&nbsp;&nbsp;
+                          <b>Longitude2:</b>&nbsp;<%= path.longitude2 %>&nbsp;&nbsp;&nbsp;
+                        </p>
+                        <p>
+                          <b>Storms:</b>&nbsp;<%= path.storms %>&nbsp;&nbsp;&nbsp;
+                          <b>Stormed:</b>&nbsp;<%= path.stormed %>&nbsp;&nbsp;&nbsp;
+                        </p>
+                      </blockquote>
+                  <% end %>
+                  </blockquote>
+                </details>
+            <% end %>
+          </blockquote>
+        </details>
+
+      </blockquote>
+    </details>
   </tr>
 <% end %>
 </table>
