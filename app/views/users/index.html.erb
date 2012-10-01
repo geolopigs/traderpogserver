@@ -4,7 +4,17 @@
 <% @users.each do |user| %>
   <tr>
     <details>
-      <summary><%= user.fb_name %>&nbsp;&nbsp;&nbsp;<b>ID:</b>&nbsp;<%= user.id %>&nbsp;&nbsp;&nbsp;<b>Bucks:</b>&nbsp;<%= user.bucks %>&nbsp;&nbsp;&nbsp;<b>Member:</b>&nbsp;<%= user.member %></summary>
+      <summary>
+        <% if user.fb_name.nil? %>
+            Non-Facebook Account
+        <% else %>
+            <%= user.fb_name %>&nbsp;&nbsp;&nbsp;
+        <% end %>
+
+        <b>ID:</b>&nbsp;<%= user.id %>&nbsp;&nbsp;&nbsp;
+        <b>Bucks:</b>&nbsp;<%= user.bucks %>&nbsp;&nbsp;&nbsp;
+        <b>Member:</b>&nbsp;<%= user.member %>
+      </summary>
       <blockquote>
         <p><b>FBID:</b>&nbsp;<%= user.fbid %></p>
         <p><b>Friends:</b>&nbsp;<%= user.fb_friends %></p>
