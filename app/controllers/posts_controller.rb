@@ -37,7 +37,7 @@ class PostsController < ApplicationController
       }
       format.json {
         @post = Post.find(params[:id], :select => "id, img, latitude, longitude, name, user_id, item_info_id, supply, supplymaxlevel, supplyratelevel, beacontime")
-        log_event(:post, :retrieve_single_post, param[:id])
+        log_event(:post, :retrieve_single_post, params[:id])
         render json: @post.as_json
       }
     end
