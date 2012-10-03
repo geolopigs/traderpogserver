@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120927163915) do
+ActiveRecord::Schema.define(:version => 20121002230548) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -117,6 +117,18 @@ ActiveRecord::Schema.define(:version => 20120927163915) do
   end
 
   add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
+
+  create_table "sales", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "post_id"
+    t.integer  "amount"
+    t.string   "fbid"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "sales", ["post_id"], :name => "index_sales_on_post_id"
+  add_index "sales", ["user_id"], :name => "index_sales_on_user_id"
 
   create_table "user_flyers", :force => true do |t|
     t.integer  "user_id"

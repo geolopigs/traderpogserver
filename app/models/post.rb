@@ -6,6 +6,8 @@ class Post < ActiveRecord::Base
   validates :supplymaxlevel, :presence => true
   validates :supplyratelevel, :presence => true
 
+  has_many :sales, :dependent => :destroy
+
   belongs_to :user
   belongs_to :item_info
 end

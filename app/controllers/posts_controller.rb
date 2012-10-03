@@ -114,7 +114,8 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
     post_params = (params[:post]).clone
     beacontime_error = false
-    supply_error = false;
+    supply_error = false
+    num_of_items_sold = 0
 
     respond_to do |format|
       format.html {
@@ -125,6 +126,7 @@ class PostsController < ApplicationController
         end
       }
       format.json {
+
         # Check if user is trying to set beacon...
         if post_params[:beacontime] != nil
           userid = @post.user_id
@@ -136,6 +138,7 @@ class PostsController < ApplicationController
             beacontime_error = true
           end
         end
+
         # Check if user is trying to set supply
         if post_params[:supply] != nil
           current_supply = @post.supply
@@ -143,6 +146,7 @@ class PostsController < ApplicationController
           if (change_value <= 0)
             new_supply = current_supply + change_value
             post_params.merge!(:supply => [new_supply, 0].max)
+            num_of_items_sold = [current_supply, change_value.abs].min
             # updates that reduce the supply value of a post must stand alone
             if (post_params.size > 1)
               supply_error = true
@@ -153,8 +157,19 @@ class PostsController < ApplicationController
             post_params.merge!(:supply => new_supply)
           end
         end
+
         if !supply_error && !beacontime_error && @post.update_attributes(post_params)
           log_event(:post, :update, @post.as_json)
+
+          # record sale
+          if num_of_items_sold > 0
+            fbid = request.headers["fbid"]
+            @item = ItemInfo.find(@post.item_info_id)
+            amount = 0.05 * num_of_items_sold * @item.price
+            @sale = Sale.new({ :post_id => @post.id, :user_id => @post.user_id, :amount => Integer(amount), :fbid => fbid })
+            @sale.save
+          end
+
           if ApplicationHelper.validate_key(request.headers["Validation-Key"])
             render json: @post.as_json(:only => [:id, :supply, :supplymaxlevel, :supplyratelevel])
           else

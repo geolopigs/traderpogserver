@@ -5,6 +5,7 @@ TraderPog::Application.routes.draw do
       get 'facebook'
     end
 
+    resources :sales
     resources :user_leaderboards
     resources :userconfigs
     resources :user_flyers do
