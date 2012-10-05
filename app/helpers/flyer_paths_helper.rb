@@ -25,7 +25,7 @@ module FlyerPathsHelper
     a = Math.sin(dlat_rad/2)**2 + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(dlon_rad/2)**2
     c = 2 * Math.asin( Math.sqrt(a))
 
-    dMeters = RMETERS * c     # delta in meters
-    dMeters
+    dKm = RKM * c     # delta in kilometers
+    [dKm, 1].max      # always make it at least 1km
   end
 end
