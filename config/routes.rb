@@ -5,6 +5,10 @@ TraderPog::Application.routes.draw do
       get 'facebook'
     end
 
+    member do
+      put 'updatemember'
+    end
+
     resources :sales
     resources :user_leaderboards
     resources :userconfigs

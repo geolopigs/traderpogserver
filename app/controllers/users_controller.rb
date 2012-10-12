@@ -244,4 +244,19 @@ class UsersController < ApplicationController
       end
     end
   end
+
+  # PUT /users/1/updatemember
+  def updatemember
+    respond_to do |format|
+      format.json {
+        @user = User.find(params[:id])
+        receipt = params[:receipt]
+        if receipt
+          update_membertime = { :membertime => Time.utc(2100) }
+          @user.update_attributes(update_membertime)
+        end
+        render json: @user.as_json(:only => [:membertime])
+      }
+    end
+  end
 end
