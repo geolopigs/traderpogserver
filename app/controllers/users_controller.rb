@@ -66,7 +66,7 @@ class UsersController < ApplicationController
           @user = User.find(params[:id])
         }
         format.json {
-          @user = User.find(params[:id], :select => "id, fbid, member, bucks, email")
+          @user = User.find(params[:id], :select => "id, fbid, membertime, bucks, email")
           render json: @user.as_json(:except => [:id])
         }
       rescue
