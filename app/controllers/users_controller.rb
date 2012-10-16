@@ -232,7 +232,7 @@ class UsersController < ApplicationController
         format.json {
           if @user
             log_event(:user, :facebook, @user.as_json)
-            render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey])
+            render json: @user.as_json(:only => [:id, :fbid, :membertime, :bucks, :email, :secretkey])
           else
             create_error(:not_found, :get, facebookid, "Could not find matching user for facebookid")
           end
