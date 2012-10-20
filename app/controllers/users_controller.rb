@@ -104,7 +104,7 @@ class UsersController < ApplicationController
     end
 
     # initialize bucks to be 200 and member to be false
-    user_params.merge!(:bucks => 200, :member => false)
+    user_params.merge!(:bucks => 200, :membertime => nil)
 
     # handle fb friends case
     friends = user_params.delete(:fb_friends)
@@ -131,7 +131,7 @@ class UsersController < ApplicationController
         # that users are only ever created via the JSON API. The website interface
         # should only be used for debugging purposes.
         format.html { redirect_to @user, notice: 'User was successfully created.' }
-        format.json { render json: @user.as_json(:only => [:id, :fbid, :member, :bucks, :email, :secretkey]) }
+        format.json { render json: @user.as_json(:only => [:id, :fbid, :membertime, :bucks, :email, :secretkey]) }
       else
         format.html { render action: "new" }
         format.json {

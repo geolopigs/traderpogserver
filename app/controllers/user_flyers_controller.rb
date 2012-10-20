@@ -17,7 +17,7 @@ class UserFlyersController < ApplicationController
           else
             path = UserFlyersHelper.getflyerpaths(userflyer, 1, false)
           end
-          userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled]).merge(path)
+          userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled, :level, :colorindex]).merge(path)
         }
         render json: @complete_userflyers
       }
@@ -36,7 +36,7 @@ class UserFlyersController < ApplicationController
         else
           path = UserFlyersHelper.getflyerpaths(@userflyer, 1, false)
         end
-        render json: @userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled]).merge(path)
+        render json: @userflyer.as_json(:only => [:id, :flyer_info_id, :item_info_id, :num_items, :cost_basis, :meterstraveled, :level, :colorindex]).merge(path)
       }
     end
   end

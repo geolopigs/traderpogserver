@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121011203739) do
+ActiveRecord::Schema.define(:version => 20121020004251) do
 
   create_table "flyer_infos", :force => true do |t|
     t.integer  "capacity"
@@ -139,6 +139,8 @@ ActiveRecord::Schema.define(:version => 20121011203739) do
     t.integer  "num_items"
     t.float    "cost_basis"
     t.float    "meterstraveled"
+    t.integer  "level"
+    t.integer  "colorindex"
   end
 
   add_index "user_flyers", ["flyer_info_id"], :name => "index_user_flyers_on_flyer_info_id"
