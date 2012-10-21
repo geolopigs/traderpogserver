@@ -92,31 +92,49 @@ class UserFlyersController < ApplicationController
         end
         }
       format.json {
-        @flyerpath = @userflyer.flyer_paths.order("created_at DESC").first
-        user_flyer_params = params[:user_flyer].clone
+        if params[:flyer_path]
+          @flyerpath = @userflyer.flyer_paths.order("created_at DESC").first
+          user_flyer_params = params[:user_flyer].clone
 
-        flyer_path_params = params[:flyer_path].clone
+          flyer_path_params = params[:flyer_path].clone
 
-        success = true
-        if user_flyer_params.length > 0
-          if !(@userflyer.update_attributes(user_flyer_params))
-            success = false
+          success = true
+          if user_flyer_params.length > 0
+            if !(@userflyer.update_attributes(user_flyer_params))
+              success = false
+            end
           end
-        end
-        if success && flyer_path_params && flyer_path_params.length > 0
-          if !(@flyerpath.update_attributes(flyer_path_params))
-            success = false
+          if success && flyer_path_params && flyer_path_params.length > 0
+            if !(@flyerpath.update_attributes(flyer_path_params))
+              success = false
+            end
           end
-        end
 
-        if success
-          log_event(:user_flyer, :create, @userflyer.as_json)
-          log_event(:user_flyer, :create, @flyerpath.as_json)
-          render json: @userflyer.as_json(:only => [:id])
+          if success
+            log_event(:user_flyer, :create, @userflyer.as_json)
+            log_event(:user_flyer, :create, @flyerpath.as_json)
+            render json: @userflyer.as_json(:only => [:id])
+          else
+            create_error(:unprocessable_entity, :put, user_flyer_params + flyer_path_params, @user_flyer.errors)
+          end
         else
-          create_error(:unprocessable_entity, :put, user_flyer_params + flyer_path_params, @user_flyer.errors)
+          user_flyer_params = params[:user_flyer].clone
+
+          success = true
+          if user_flyer_params.length > 0
+            if !(@userflyer.update_attributes(user_flyer_params))
+              success = false
+            end
+          end
+
+          if success
+            log_event(:user_flyer, :create, @userflyer.as_json)
+            render json: @userflyer.as_json(:only => [:id])
+          else
+            create_error(:unprocessable_entity, :put, user_flyer_params, @user_flyer.errors)
+          end
         end
-        }
+      }
     end
   end
 
