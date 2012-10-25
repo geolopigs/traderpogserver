@@ -22,7 +22,7 @@ test:
   pool: 5
   timeout: 5000
 
-production:
+staging:
   adapter: postgresql
   database: d1d2a7gm61e3dc
   pool: 5
@@ -31,4 +31,15 @@ production:
   port: 5432
   username: dbyxltnxapfzen
   password: 7JqIA_0D8xCJUMh3Re3cAkCMtE
+  sslmode: require
+
+production:
+  adapter: postgresql
+  database: d536r2s13bc8vj
+  pool: 5
+  timeout: 5000
+  host: ec2-54-243-42-26.compute-1.amazonaws.com
+  port: 5492
+  username: u3thuqa9o68tec
+  password: p415mj0s4d2ut4fhfl41uqb4s5u
   sslmode: require
