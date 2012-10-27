@@ -263,7 +263,7 @@ class PostsController < ApplicationController
         end
         @posts.as_json.each do |post|
           beacon = post.clone
-          beacon['fbid'] = friend_hash[post['id']]
+          beacon['fbid'] = friend_hash[post['user_id']]
           beacon_list << beacon
         end
       end
